@@ -68,7 +68,7 @@ try:
     lng=sys.argv[2]
     zm =sys.argv[3]
 
-except errors as e:
+except Exception as e:
     print("error:", e)
     print("use stockholm")
     lat = 59.34

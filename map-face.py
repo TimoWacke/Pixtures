@@ -9,7 +9,7 @@ import sys
 
 patterns = []
 
-patternnames = {"nature":5, "simple": 5}
+patternnames = {"nature":5, "simple": 5, "hand": 16}
 patternfilelist = []
 
 for category in patternnames:
@@ -19,7 +19,11 @@ for category in patternnames:
 
 
 for file in patternfilelist:
-    pat = Image.open("/root/Pixtures/patterns/" + file)
+    try:
+        pat = Image.open("/root/Pixtures/patterns/" + file)
+    except:
+        pat = Image.open("patterns/" + file)
+    pat = pat.resize((120,120))
     paxels = pat.load()
     h = 0
     count = 0
@@ -45,7 +49,7 @@ def getMatchingPattern(type, bright):
     return minpattern
 
 def getPatternPixel(pattern, x, y, offsetx, offsety, color):
-    pixel = pattern["pixels"][x%100 + offsetx, y%100 + offsety] 
+    pixel = pattern["pixels"][x%100 + offsetx + 10, y%100 + offsety + 10] 
     if pixelIsColor(pixel, [255, 255,255], 15):
         return (color[0], color[1], color[2], 255)
     return pixel
@@ -81,15 +85,15 @@ try:
     print(sys.argv[1])
     im = Image.open(sys.argv[1])
 except:
-    im = Image.open("/root/Pixtures/img/city-map-src.png")
+    im = Image.open("img/city-map-src.png")
 try:
     pt = Image.open("/root/Pixtures/img/" + sys.argv[2])
 except:
-    pt = Image.open("/root/Pixtures/img/portrait-src.png")
+    pt = Image.open("img/portrait-src.png")
 try:
     exportfile = sys.argv[1][:-4] + "edit_merged.png"
 except:
-    exportfile = "/root/Pixtures/img/edit_merged.png"
+    exportfile = "img/edit_merged.png"
 
 ratio = pt.size[0] / pt.size[1]
 neww = min(im.size[0], im.size[1] * ratio)
@@ -189,7 +193,7 @@ print("coloring clusters...")
 for clust in clusters:
     color = colorForCluster(clust)
     desiredBrightness = sum(color) / len(color) / 255
-    pattern = getMatchingPattern("simple", desiredBrightness)
+    pattern = getMatchingPattern("hand", desiredBrightness)
     factor = desiredBrightness / pattern["brightness"]
     offsetx = randrange(-10, 10)
     offsety = randrange(-10, 10)
