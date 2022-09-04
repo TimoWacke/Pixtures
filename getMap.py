@@ -100,6 +100,6 @@ try:
         print("exists already")
 
 except:
-    filename = re.findall(r'/root/Pixtures/(\S+)$', filename)[0]
+    filename = filename[len("/root/Pixtures"):]
     print(screenshot(lat, lng, zm, filename))
 
