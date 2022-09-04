@@ -66,6 +66,7 @@ zm =sys.argv[3]
 
 geolocator = Nominatim(user_agent="geoapiExercises")
 location = geolocator.reverse(lat + "," + lng)
+print(location)
 city = location.raw['address'].get('city')
 print(city)
 
@@ -75,4 +76,3 @@ if not os.path.exists(filename):
     print(screenshot(lat, lng, zm, filename))
 else:
     print("exists already")
-    print(city)
