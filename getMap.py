@@ -1,3 +1,4 @@
+from codecs import latin_1_decode
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -8,6 +9,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium import webdriver
 import sys
 import time
+import os
 #some standard imports
 
 #used for standard options
@@ -34,7 +36,7 @@ def startSession():
     driver.execute_script("return navigator.userAgent")
     return driver
 
-def screenshot(lat,lng,zm):
+def screenshot(lat,lng,zm, filename):
     startSession()
     print("selenium session started")
     #searchesthe eans
@@ -56,4 +58,10 @@ def screenshot(lat,lng,zm):
 
 print("________________")
 
-print(screenshot(sys.argv[1],sys.argv[2],sys.argv[3]))
+lat=sys.argv[1]
+lng=sys.argv[2]
+zm =sys.argv[3]
+
+filename = f'/root/Pixtures/img/{lat}_{lng}_{zm}map.png'
+if not os.path.exists(filename):
+    print(screenshot(lat, lng, zm, filename))
