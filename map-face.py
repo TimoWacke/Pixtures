@@ -80,7 +80,7 @@ def greenTransparent(pixel, portel):
 try:
     im = Image.open("/root/Pixtures/img/" + sys.argv[1] + ".png")
 except:
-    im = Image.open("/root/Pixtures/img/city-map.png")
+    im = Image.open("/root/Pixtures/img/city-map-src.png")
 try:
     pt = Image.open("/root/Pixtures/img/" + sys.argv[2])
 except:
