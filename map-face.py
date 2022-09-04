@@ -19,7 +19,7 @@ for category in patternnames:
 
 
 for file in patternfilelist:
-    pat = Image.open("root/Pixtures/patterns/" + file)
+    pat = Image.open("/root/Pixtures/patterns/" + file)
     paxels = pat.load()
     h = 0
     count = 0
@@ -79,17 +79,17 @@ def greenTransparent(pixel, portel):
 
 
 try:
-    im = Image.open("root/Pixtures/img/" + sys.argv[1] + ".png")
+    im = Image.open("/root/Pixtures/img/" + sys.argv[1] + ".png")
 except:
-    im = Image.open("root/Pixtures/img/amsterdam.png")
+    im = Image.open("/root/Pixtures/img/amsterdam.png")
 try:
-    pt = Image.open("root/Pixtures/img/" + sys.argv[2])
+    pt = Image.open("/root/Pixtures/img/" + sys.argv[2])
 except:
-    pt = Image.open("root/Pixtures/img/portrait.png")
+    pt = Image.open("/root/Pixtures/img/portrait.png")
 try:
-    exportfile = "root/Pixtures/img/" + sys.argv[1] + "edit_merged.png"
+    exportfile = "/root/Pixtures/img/" + sys.argv[1] + "edit_merged.png"
 except:
-    exportfile = "root/Pixtures/img/edit_merged.png"
+    exportfile = "/root/Pixtures/img/edit_merged.png"
 
 ratio = pt.size[0] / pt.size[1]
 neww = min(im.size[0], im.size[1] * ratio)

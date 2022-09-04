@@ -27,7 +27,7 @@ def getOptions():
 #startSession() is used to keep the browser open through global 
 def startSession():
     global driver
-    driver = webdriver.Chrome(executable_path="/root/.wdm/drivers/chromedriver/linux64/105.0.5195.52/chromedriver",options=getOptions())
+    driver = webdriver.Chrome(executable_path="//root/.wdm/drivers/chromedriver/linux64/105.0.5195.52/chromedriver",options=getOptions())
     driver.set_window_position(0,0)
     driver.set_window_size(3500,3500)
     #initializes the user agent
@@ -47,7 +47,7 @@ def screenshot(lat,lng,zm):
     # WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH,\
     #     '//*[@id="content"]/div[2]/div[3]/div[1]/div/p/span')))
     #goes into xpath with price and returns text value
-    driver.get_screenshot_as_file(f'root/Pixtures/img/{lat}_{lng}_{zm}map.png')
+    driver.get_screenshot_as_file(f'/root/Pixtures/img/{lat}_{lng}_{zm}map.png')
     print("...saved")
     driver.quit()
     print("end....")
