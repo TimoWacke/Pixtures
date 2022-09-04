@@ -69,16 +69,17 @@ try:
     zm =sys.argv[3]
 
 except:
-    lat = 53.57
-    lng = 9.99
+    lat = 59.32
+    lng = 18.099
     zm = 14
 
 geolocator = Nominatim(user_agent="geoapiExercises")
 location = geolocator.reverse(f'{lat}, {lng}')
 
 address = location[0].split(", ")
-city = address[len(address)-2]
+city = address[len(address)-3]
 print(city)
+print(address)
 
 
 filename = f'/root/Pixtures/img/{lat}_{lng}_{zm}-{city}-map.png'
