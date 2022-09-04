@@ -58,7 +58,6 @@ def screenshot(lat,lng,zm, filename):
     return url
 
 
-print("________________")
 
 lat=sys.argv[1]
 lng=sys.argv[2]
@@ -68,23 +67,9 @@ zm =sys.argv[3]
 geolocator = Nominatim(user_agent="geoapiExercises")
 location = geolocator.reverse(lat + "," + lng)
 city = location.raw['address'].get('city')
+print("city")
 
 filename = f'/root/Pixtures/img/{lat}_{lng}_{zm}-{city}-map.png'
-srcfile = '/root/Pixtures/img/city-map-src.png'
-
-
 
 if not os.path.exists(filename):
     print(screenshot(lat, lng, zm, filename))
-else:
-    print("exists already")
-try: 
-    os.popen(f'cp {filenname} {srcfile}') 
-except:
-    try:
-        os.popen(f'copy {filenname} {srcfile}') 
-    except: 
-        print("Could not copy, get's new:")
-        print(screenshot(lat, lng, zm, srcfile))
-
-        
