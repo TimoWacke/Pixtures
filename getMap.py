@@ -69,7 +69,7 @@ try:
     zm =sys.argv[3]
 
 except:
-    lat = 59.32
+    lat = 59.34
     lng = 18.099
     zm = 14
 
@@ -85,11 +85,10 @@ for word in state.split(" "):
         if word == w:
             city.append(w)
 if(len(city) == 0):
-    city = state
+    city = county + "-" + state
 else:
     city = " ".join(city)
 print(city)
-print(address)
 
 
 filename = f'/root/Pixtures/img/{lat}_{lng}_{zm}-{city}-map.png'
