@@ -19,7 +19,7 @@ for category in patternnames:
 
 
 for file in patternfilelist:
-    pat = Image.open("patterns/" + file)
+    pat = Image.open("root/Pixtures/patterns/" + file)
     paxels = pat.load()
     h = 0
     count = 0
