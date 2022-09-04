@@ -31,7 +31,10 @@ def getOptions():
 #startSession() is used to keep the browser open through global 
 def startSession():
     global driver
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),options=getOptions())
+    try:
+        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),options=getOptions())
+    except:
+        driver = webdriver.Chrome(executable_path="//root/.wdm/drivers/chromedriver/linux64/105.0.5195.52/chromedriver",options=getOptions())
     driver.set_window_position(0,0)
     driver.set_window_size(3500,3500)
     #initializes the user agent
@@ -64,8 +67,8 @@ try:
     zm =sys.argv[3]
 
 except:
-    lat = 13.57
-    lng = 98.99
+    lat = 53.57
+    lng = 9.99
     zm = 14
 
 geolocator = Nominatim(user_agent="geoapiExercises")
