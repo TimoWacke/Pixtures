@@ -77,7 +77,7 @@ geolocator = Nominatim(user_agent="geoapiExercises")
 location = geolocator.reverse(f'{lat}, {lng}')
 
 address = location[0].split(", ")
-city = address[len(address)-3]
+city = address[len(address)-2]
 print(city)
 
 
