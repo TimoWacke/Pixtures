@@ -51,7 +51,7 @@ def screenshot(lat,lng,zm, filename):
     # WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH,\
     #     '//*[@id="content"]/div[2]/div[3]/div[1]/div/p/span')))
     #goes into xpath with price and returns text value
-    driver.get_screenshot_as_file(f'/root/Pixtures/img/{lat}_{lng}_{zm}map.png')
+    driver.get_screenshot_as_file(filename)
     print("...saved")
     driver.quit()
     print("end....")
