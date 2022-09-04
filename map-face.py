@@ -79,17 +79,17 @@ def greenTransparent(pixel, portel):
 
 
 try:
-    im = Image.open("img/" + sys.argv[1] + ".png")
+    im = Image.open("root/Pixtures/img/" + sys.argv[1] + ".png")
 except:
-    im = Image.open("img/amsterdam.png")
+    im = Image.open("root/Pixtures/img/amsterdam.png")
 try:
-    pt = Image.open("img/" + sys.argv[2])
+    pt = Image.open("root/Pixtures/img/" + sys.argv[2])
 except:
-    pt = Image.open("img/portrait.png")
+    pt = Image.open("root/Pixtures/img/portrait.png")
 try:
-    exportfile = "img/" + sys.argv[1] + "edit_merged.png"
+    exportfile = "root/Pixtures/img/" + sys.argv[1] + "edit_merged.png"
 except:
-    exportfile = "img/edit_merged.png"
+    exportfile = "root/Pixtures/img/edit_merged.png"
 
 ratio = pt.size[0] / pt.size[1]
 neww = min(im.size[0], im.size[1] * ratio)
