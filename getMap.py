@@ -1,4 +1,5 @@
 from codecs import latin_1_decode
+from http.client import TEMPORARY_REDIRECT
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -7,6 +8,7 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium import webdriver
+from geopy.geocoders import Nominatim
 import sys
 import time
 import os
@@ -62,6 +64,27 @@ lat=sys.argv[1]
 lng=sys.argv[2]
 zm =sys.argv[3]
 
-filename = f'/root/Pixtures/img/{lat}_{lng}_{zm}map.png'
+
+geolocator = Nominatim(user_agent="geoapiExercises")
+location = geolocator.reverse(lat + "," + lng)
+city = location.raw['address'].get('city')
+
+filename = f'/root/Pixtures/img/{lat}_{lng}_{zm}-{city}-map.png'
+srcfile = '/root/Pixtures/img/city-map-src.png'
+
+
+
 if not os.path.exists(filename):
     print(screenshot(lat, lng, zm, filename))
+else:
+    print("exists already")
+try: 
+    os.popen(f'cp {filenname} {srcfile}') 
+except:
+    try:
+        os.popen(f'copy {filenname} {srcfile}') 
+    except: 
+        print("Could not copy, get's new:")
+        print(screenshot(lat, lng, zm, srcfile))
+
+        
