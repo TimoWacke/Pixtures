@@ -67,7 +67,7 @@ zm =sys.argv[3]
 geolocator = Nominatim(user_agent="geoapiExercises")
 location = geolocator.reverse(lat + "," + lng)
 city = location.raw['address'].get('city')
-print("city")
+print(city)
 
 filename = f'/root/Pixtures/img/{lat}_{lng}_{zm}-{city}-map.png'
 
