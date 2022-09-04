@@ -11,6 +11,7 @@ from selenium import webdriver
 from geopy.geocoders import Nominatim
 import sys
 import time
+import json
 import os
 #some standard imports
 
@@ -56,7 +57,7 @@ def screenshot(lat,lng,zm, filename):
     #     '//*[@id="content"]/div[2]/div[3]/div[1]/div/p/span')))
     #goes into xpath with price and returns text value
     driver.get_screenshot_as_file(filename)
-    print("...saved")
+    print("...saved as ", filename)
     driver.quit()
     print("end....")
     return url
@@ -74,7 +75,10 @@ except:
 
 geolocator = Nominatim(user_agent="geoapiExercises")
 location = geolocator.reverse(f'{lat}, {lng}')
-print(location[len(location)-3])
+
+address = location[0].split(", ")
+city = address[len(address)-3]
+print(city)
 
 
 filename = f'/root/Pixtures/img/{lat}_{lng}_{zm}-{city}-map.png'
