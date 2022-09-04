@@ -1,6 +1,6 @@
 
 from audioop import avg
-from math import sqrt
+from math import *
 from random import randrange
 import numpy as np
 from PIL import Image
@@ -16,14 +16,34 @@ for category in patternnames:
     for i in range(1, patternnames[category] + 1):
         patternfilelist.append(category + str(i) + ".png")
 
-
+def preparePattern(pat, loc, f):
+    pat = pat.resize((240,240))
+    pat = pat.crop((40,40, 200, 200))
+    paxels = pat.load()
+    for x in range(pat.size[0]):
+        for y in range(pat.size[1]):
+            pax = paxels[x,y]
+            if pax[3] == 0:
+                pax = (255, 255, 255, 255)
+            paxels[x,y] = pax
+    pat.save(loc + "saved-" + f)
 
 for file in patternfilelist:
     try:
-        pat = Image.open("/root/Pixtures/patterns/" + file)
+        pat = Image.open("/root/Pixtures/patterns/savedd-" + file)
     except:
-        pat = Image.open("patterns/" + file)
-    pat = pat.resize((120,120))
+        try:
+            path = "/root/Pixtures/patterns/" 
+            pat = Image.open(path + file)
+      
+        except:
+            path = "patterns/"
+            pat = Image.open(path  + file)
+
+    preparePattern(pat, path, file)
+    pat = Image.open(path + "saved-" + file)
+    patsize = 160
+    pat = pat.resize((patsize, patsize))
     paxels = pat.load()
     h = 0
     count = 0
@@ -48,10 +68,14 @@ def getMatchingPattern(type, bright):
             minpattern = pattern
     return minpattern
 
-def getPatternPixel(pattern, x, y, offsetx, offsety, color):
-    pixel = pattern["pixels"][x%100 + offsetx + 10, y%100 + offsety + 10] 
+def getPatternPixel(pattern, x, y, color):
+    pixel = pattern["pixels"][x,y]
     if pixelIsColor(pixel, [255, 255,255], 15):
-        return (color[0], color[1], color[2], 255)
+        opacity = 0.5
+        return (color[0] * opacity + 255 * (1-opacity), 
+            color[1] * opacity + 255 * (1-opacity), 
+            color[2] * opacity + 255 * (1-opacity), 
+            255)
     return pixel
 
 
@@ -72,10 +96,13 @@ def pfilter(pix):
 
 def greenTransparent(pixel, portel):
     pix = [0, 0 ,0]
-    if not pixelIsColor(pixel, (255, 255, 255), 15):
-        opacity = 0.3
-    else: 
-        opacity = 0.2
+    opacity = 0
+    if pixelIsColor(pixel, (255, 255, 255), 15):
+       opacity = 0
+    if pixelIsColor(pixel, (0, 0, 0),1): 
+       opacity = 0
+    if pixelIsColor(pixel, (166, 19, 255),)#A6C5C9
+
     pix = [pixel[0] * (1-opacity) + portel[0] * opacity,
     pixel[1] * (1-opacity) + portel[1] * opacity,
     pixel[2] * (1-opacity) + portel[2] * opacity]
@@ -118,9 +145,9 @@ clustered = np.zeros(shape=(xwidth, ywidth))
 
 
 def findCluster(x,y, dir=False, n=0):
-    if n>200:
+    if n>400:
         return
-    n+=1;
+    n+=1
     if x >= xwidth or y >= ywidth:
         return
     if clustered[x][y]:
@@ -194,10 +221,30 @@ for clust in clusters:
     desiredBrightness = sum(color) / len(color) / 255
     pattern = getMatchingPattern("hand", desiredBrightness)
     factor = desiredBrightness / pattern["brightness"]
-    offsetx = randrange(-10, 10)
-    offsety = randrange(-10, 10)
+    maxx = 0
+    maxy = 0
+    minx = xwidth
+    miny = ywidth
     for pix in clust:
-        pixels[pix[0], pix[1]] = pixelShiftBrightness(getPatternPixel(pattern, pix[0], pix[1], offsetx, offsety, color), factor) 
+        if pix[0] > maxx:
+            maxx = pix[0]
+        if pix[0] < minx:
+            minx = pix[0]
+        if pix[1] > maxy:
+            maxy = pix[1]
+        if pix[1] < miny:
+            miny = pix[1]
+    maxd = max(maxx-minx, maxy-miny)
+    for pix in clust:
+        x = pix[0] - minx
+        y = pix[1] - miny
+
+        if maxd > patsize:
+            x /= maxd / patsize
+            y /= maxd / patsize
+        x = min(patsize -1, x)
+        y = min(patsize -1, y)
+        pixels[pix[0], pix[1]] = pixelShiftBrightness(getPatternPixel(pattern, x, y, color), factor) 
         
 x=0;
 while x < xwidth:   
