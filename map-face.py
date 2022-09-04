@@ -78,7 +78,7 @@ def greenTransparent(pixel, portel):
     return pfilter(pix)
 
 try:
-    im = Image.open("/root/Pixtures/img/" + sys.argv[1] + ".png")
+    im = Image.open("/root/Pixtures/img/" + sys.argv[1])
 except:
     im = Image.open("/root/Pixtures/img/city-map-src.png")
 try:
@@ -86,7 +86,7 @@ try:
 except:
     pt = Image.open("/root/Pixtures/img/portrait-src.png")
 try:
-    exportfile = "/root/Pixtures/img/" + sys.argv[1] + "edit_merged.png"
+    exportfile = "/root/Pixtures/img/" + sys.argv[1][:-4] + "edit_merged.png"
 except:
     exportfile = "/root/Pixtures/img/edit_merged.png"
 

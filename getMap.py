@@ -105,3 +105,5 @@ except:
     filename = filename[len("/root/Pixtures"):]
     print(screenshot(lat, lng, zm, filename))
 
+print(filename)
+
