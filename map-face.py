@@ -207,4 +207,5 @@ while x < xwidth:
 
 print("saving...")
 im.save(exportfile)
+print(exportfile)
 
