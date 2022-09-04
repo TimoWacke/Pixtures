@@ -78,7 +78,7 @@ def greenTransparent(pixel, portel):
     return pfilter(pix)
 
 try:
-    im = Image.open("/root/Pixtures/img/" + sys.argv[1])
+    im = Image.open(sys.argv[1])
 except:
     im = Image.open("/root/Pixtures/img/city-map-src.png")
 try:
