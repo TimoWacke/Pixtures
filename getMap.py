@@ -31,7 +31,7 @@ def getOptions():
 #startSession() is used to keep the browser open through global 
 def startSession():
     global driver
-    driver = webdriver.Chrome(executable_path="//root/.wdm/drivers/chromedriver/linux64/105.0.5195.52/chromedriver",options=getOptions())
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),options=getOptions())
     driver.set_window_position(0,0)
     driver.set_window_size(3500,3500)
     #initializes the user agent
@@ -58,21 +58,30 @@ def screenshot(lat,lng,zm, filename):
     return url
 
 
+try:
+    lat=sys.argv[1]
+    lng=sys.argv[2]
+    zm =sys.argv[3]
 
-lat=sys.argv[1]
-lng=sys.argv[2]
-zm =sys.argv[3]
-
+except:
+    lat = 13.57
+    lng = 98.99
+    zm = 14
 
 geolocator = Nominatim(user_agent="geoapiExercises")
-location = geolocator.reverse(lat + "," + lng)
-print(location)
-city = location.raw['address'].get('city')
-print(city)
+location = geolocator.reverse(f'{lat}, {lng}')
+print(location[len(location)-3])
+
 
 filename = f'/root/Pixtures/img/{lat}_{lng}_{zm}-{city}-map.png'
 
-if not os.path.exists(filename):
+try:
+    if not os.path.exists(filename):
+        print(screenshot(lat, lng, zm, filename))
+    else:
+        print("exists already")
+
+except:
+    filename = re.findall(r'/root/Pixtures/(\S+)$', filename)[0]
     print(screenshot(lat, lng, zm, filename))
-else:
-    print("exists already")
+
