@@ -117,7 +117,7 @@ def greenTransparent(pixel, portel):
     if pixelIsColor(pixel, (0, 0, 0),1): 
        opacity = 0.2
     if pixelIsColor(pixel, colors["water"],10):
-       opacity = 0.25
+       opacity = 0.175
     pix = [pixel[0] * (1-opacity) + portel[0] * opacity,
     pixel[1] * (1-opacity) + portel[1] * opacity,
     pixel[2] * (1-opacity) + portel[2] * opacity]
