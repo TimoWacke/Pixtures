@@ -50,7 +50,7 @@ def screenshot(lat,lng,zm, filename):
     url= f'https://framed.timopictur.es/html/map.html?lat={lat}lng={lng}zm={zm}'
     print("site opened")
     driver.get(url)
-    time.sleep(5)
+    time.sleep(7)
     
     print("screenshot...")
     # WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH,\
