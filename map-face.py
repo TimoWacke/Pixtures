@@ -18,7 +18,7 @@ for category in patternnames:
         patternfilelist.append(category + str(i) + ".png")
 
 padding = 10
-minEdgeSize = 2500
+minEdgeSize = 2750
 patsize = min(350, round(minEdgeSize / 15))  # should be an even number
 doFilter = True
 
@@ -114,7 +114,7 @@ def pixelIsColor(pixel, color, tolerance):
     return True
 
 def pfilter(pix):
-    saturation = 0.3
+    saturation = 0.36
     for i in range(3):
         pix[i] = round(pix[i] * saturation + (sum(pix) / len(pix)) * (1- saturation))
     return (pix[0], pix[1], pix[2], 255)
@@ -135,7 +135,7 @@ def greenTransparent(pixel, portel):
     pixel[1] * (1-opacity) + portel[1] * opacity,
     pixel[2] * (1-opacity) + portel[2] * opacity]
 
-    contrast = 0.75
+    contrast = 0.8
     for i, p in enumerate(pix):
         pix[i] = max(min(255, round(p * contrast + 255 * (1-contrast) / 2)), 0)
     return (pix[0], pix[1], pix[2], 255)
