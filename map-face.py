@@ -10,7 +10,7 @@ import time
 patterns = []
 chosen_count = {}
 
-patternnames = {"nature":5, "simple": 7, "hand": 16}
+patternnames = {"nature":5, "simple": 6, "hand": 16}
 patternfilelist = []
 
 for category in patternnames:
@@ -19,8 +19,8 @@ for category in patternnames:
 
 padding = 10
 minEdgeSize = 2000
-patsize = round(minEdgeSize / 20) * 2 # should be an even number
-doFilter = False
+patsize = round(minEdgeSize / 10)  # should be an even number
+doFilter = True
 
 colors = {
 "buildings": [64, 64, 64],
@@ -289,25 +289,16 @@ for clust in clusters:
         if pix[1] < miny:
             miny = pix[1]
     maxd = max(maxx-minx, maxy-miny)
-    xo = randrange(patsize / 2)
-    yo = randrange(patsize / 2)
+    xo = randrange(round(patsize / 2))
+    yo = randrange(round(patsize / 2))
     for pix in clust["pixels"]:
         x = pix[0] - minx
         y = pix[1] - miny
-
-        if maxd >= patsize:
-            x /= maxd / patsize
-            y /= maxd / patsize
-            x = min(patsize -1, x)
-            y = min(patsize -1, y)
-        elif maxd < patsize / 2 and maxd > 2:
-            x *= 2
-            y *= 2
-            if maxd < patsize / 4:    
-                x += xo
-                y += yo
-            x = min(patsize -1, x)
-            y = min(patsize -1, y)
+  
+        x += xo
+        y += yo
+        x = x % patsize
+        y = y % patsize 
         try:
             if clust["typ"] == "parks":
                 pixels[pix[0], pix[1]] = pixelShiftBrightness(getPatternPixel(pattern, x, y, (200, 200, 200, 200)), factor) 
