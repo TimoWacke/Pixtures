@@ -19,7 +19,7 @@ for category in patternnames:
 
 padding = 10
 minEdgeSize = 3000
-patsize = round(minEdgeSize / 15)  # should be an even number
+patsize = min(350, round(minEdgeSize / 15))  # should be an even number
 doFilter = True
 
 colors = {
@@ -32,12 +32,6 @@ def preparePattern(pat, loc, f):
     pat = pat.resize((patsize+2*padding,patsize+2*padding))
     pat = pat.crop((padding,padding, patsize+padding, patsize+padding))
     paxels = pat.load()
-    for x in range(pat.size[0]):
-        for y in range(pat.size[1]):
-            pax = paxels[x,y]
-            if pax[3] == 0:
-                pax = (255, 255, 255, 255)
-            paxels[x,y] = pax
     pat.save(loc + "saved-" + f)
 
 print("preparing patterns...")
@@ -68,12 +62,10 @@ for file in patternfilelist:
     for x in range(pat.size[0]):
         for y in range(pat.size[1]):
             pax = paxels[x,y]
-            if pax[3] == 0:
-                pax = (255, 255, 255, 255)
-            paxels[x,y] = pax
-            h += pax[0] + pax[1] + pax[2]
+            opac = pax[3] / 255
+            h += (pax[0] + pax[1] + pax[2]) / 3 * opac + 255 * (1 - opac)
             count += 1
-    h /= 255 * 3 * count
+    h /= count * 255
     chosen_count[file] = 0
     patterns.append({"brightness": h, "pixels": paxels, "type": re.findall(r'(\S+)\d+\.png', file)[0], "name": file})
     
@@ -83,16 +75,34 @@ def getMatchingPattern(typeList, bright):
     minpattern = sorted(filter(lambda d: d["type"] in typeList, patterns), key=lambda item: item["brightness"], reverse=True)[0]
     for pattern in patterns:
         if pattern["type"] in typeList:
-            if pattern["brightness"] > bright and  pattern["brightness"] < minpattern["brightness"]:
+            if pattern["brightness"] > bright  and  pattern["brightness"] < minpattern["brightness"]:
                 minpattern = pattern
 
     chosen_count[minpattern["name"]] += 1
     return minpattern
 
+def blVl(o, n, opac):
+   return round((o * opac * n + (1-opac) * n))
+
+def blendValue(old, new, opac=False):
+    if not opac:
+        opac = old[3] / 255
+    return (
+        blVl(old[0], new[0], opac),
+        blVl(old[1], new[1], opac),
+        blVl(old[2], new[2], opac),
+        255)
+
+def linearBlendValue(old, new, opac):
+    return (
+        old[0] * (1-opac), new[0] * opac,
+        old[1] * (1-opac), new[1] * opac,
+        old[2] * (1-opac), new[2] * opac,
+        255)
+
 def getPatternPixel(pattern, x, y, color):
     pixel = pattern["pixels"][x,y]
-    b = (pixel[0] + pixel[1] + pixel[3]) / (3*255)
-    return (color[0] * b, color[1] * b, color[2] *b, 255)
+    return blendValue(pixel, color)
 
 def pixelIsColor(pixel, color, tolerance):
     i = 0
@@ -104,24 +114,33 @@ def pixelIsColor(pixel, color, tolerance):
     return True
 
 def pfilter(pix):
-    saturation = 0.8
+    saturation = 0
     for i in range(3):
         pix[i] = round(pix[i] * saturation + (sum(pix) / len(pix)) * (1- saturation))
     return (pix[0], pix[1], pix[2], 255)
 
+
 def greenTransparent(pixel, portel):
-    pix = [0, 0 ,0]
-    opacity = 0
+    portel = pfilter(portel[0], portel[1], portel[2])
+    opacity = 0.25
     if pixelIsColor(pixel, (255, 255, 255), 15):
        opacity = 0
     if pixelIsColor(pixel, (0, 0, 0),1): 
        opacity = 0.15
     if pixelIsColor(pixel, colors["water"],10):
-       opacity = 0.175
+       opacity = 0.15
+    if pixelIsColor(pixel, colors["parks"],10):
+           opacity = 0.4
     pix = [pixel[0] * (1-opacity) + portel[0] * opacity,
     pixel[1] * (1-opacity) + portel[1] * opacity,
     pixel[2] * (1-opacity) + portel[2] * opacity]
-    return pfilter(pix)
+
+    contrast = 0.75
+    for i, p in enumerate(pix):
+        pix[i] = max(min(255, round(p * contrast + 255 * (1-contrast) / 2)), 0)
+    return (pix[0], pix[1], pix[2], 255)
+
+
 
 try:
     im = Image.open(sys.argv[1])
@@ -292,7 +311,7 @@ for clust in clusters:
         y = y % patsize 
         try:
             if clust["typ"] == "parks":
-                pixels[pix[0], pix[1]] = pixelShiftBrightness(getPatternPixel(pattern, x, y, (200, 200, 200, 200)), factor) 
+                pixels[pix[0], pix[1]] = getPatternPixel(pattern, x, y, colors["parks"])
             else:
                 pixels[pix[0], pix[1]] = pixelShiftBrightness(getPatternPixel(pattern, x, y, color), factor) 
         except Exception as e:
