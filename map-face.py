@@ -257,7 +257,7 @@ start_time = time.time()
 print("coloring clusters...")
 clust_counter = 0
 for clust in clusters:
-    color = (randrange(255), randrange(255), randrange(255), 255)#colorForCluster(clust)
+    color = colorForCluster(clust)
     desiredBrightness = sum(color) / len(color) / 255
     if clust["typ"] == "buildings":
         pattern = getMatchingPattern(["simple"], desiredBrightness)
