@@ -104,7 +104,7 @@ def pixelIsColor(pixel, color, tolerance):
     return True
 
 def pfilter(pix):
-    saturation = 1
+    saturation = 0.8
     for i in range(3):
         pix[i] = round(pix[i] * saturation + (sum(pix) / len(pix)) * (1- saturation))
     return (pix[0], pix[1], pix[2], 255)
@@ -182,29 +182,20 @@ def findCluster(x,y, dir=False, n=0, typ=False):
         if not typ:
             return c
 
-    if not dir:
+    if  dir:
         c += findCluster(x,y+1, "up", n, typ)
         c += findCluster(x+1,y, "right", n, typ)
         c += findCluster(x,y-1,"down", n, typ)
         c += findCluster(x-1,y,  "left", n, typ)
         return c
+    if dir != "up" :
+        c += findCluster(x,y-1,"down", n, typ)
+    if dir != "right" :
+        c += findCluster(x-1,y,  "left", n, typ)
     if dir != "down":
-        c += findCluster(x-1,y,  "left", n, typ)
         c += findCluster(x,y+1, "up", n, typ)
+    if dir != "left" :
         c += findCluster(x+1,y, "right", n, typ)
-    elif dir != "right" :
-        c += findCluster(x,y+1, "up", n, typ)
-        c += findCluster(x,y-1,"down", n, typ)
-        c += findCluster(x-1,y,  "left", n, typ)
-    elif dir != "up" :
-        c += findCluster(x+1,y, "right", n, typ)
-        c += findCluster(x-1,y,  "left", n, typ)
-        c += findCluster(x,y-1,"down", n, typ)
-
-    elif dir != "left" :
-        c += findCluster(x,y+1, "up", n, typ)
-        c += findCluster(x+1,y, "right", n, typ)
-        c += findCluster(x,y-1,"down", n, typ)
     return c
         
 '''
@@ -266,7 +257,7 @@ start_time = time.time()
 print("coloring clusters...")
 clust_counter = 0
 for clust in clusters:
-    color = colorForCluster(clust)
+    color = (randrange(255), randrange(255), randrange(255), 255)#colorForCluster(clust)
     desiredBrightness = sum(color) / len(color) / 255
     if clust["typ"] == "buildings":
         pattern = getMatchingPattern(["simple"], desiredBrightness)
