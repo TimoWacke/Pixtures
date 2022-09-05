@@ -18,7 +18,7 @@ for category in patternnames:
         patternfilelist.append(category + str(i) + ".png")
 
 padding = 10
-minEdgeSize = 3000
+minEdgeSize = 2500
 patsize = min(350, round(minEdgeSize / 15))  # should be an even number
 doFilter = True
 
