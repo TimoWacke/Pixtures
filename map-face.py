@@ -19,7 +19,7 @@ for category in patternnames:
 
 padding = 10
 minEdgeSize = 4000
-patsize = round(minEdgeSize / 10)  # should be an even number
+patsize = round(minEdgeSize / 20)  # should be an even number
 doFilter = True
 
 colors = {
