@@ -114,7 +114,7 @@ def pixelIsColor(pixel, color, tolerance):
     return True
 
 def pfilter(pix):
-    saturation = 0.36
+    saturation = 0.5
     for i in range(3):
         pix[i] = round(pix[i] * saturation + (sum(pix) / len(pix)) * (1- saturation))
     return (pix[0], pix[1], pix[2], 255)
