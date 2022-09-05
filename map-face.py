@@ -10,16 +10,16 @@ import time
 patterns = []
 chosen_count = {}
 
-patternnames = {"nature":5, "simple": 5, "hand": 16, "nature": 5}
+patternnames = {"nature":5, "simple": 7, "hand": 16}
 patternfilelist = []
 
 for category in patternnames:
     for i in range(1, patternnames[category] + 1):
         patternfilelist.append(category + str(i) + ".png")
 
-patsize = 700
-padding = 40
-minEdgeSize = 4000
+padding = 10
+minEdgeSize = 2000
+patsize = round(minEdgeSize / 20) * 2 # should be an even number
 doFilter = False
 
 colors = {
@@ -79,10 +79,13 @@ for file in patternfilelist:
     
 
 def getMatchingPattern(typeList, bright):
-    minpattern = sorted(filter(lambda d: d["type"] in typeList, patterns), key=lambda item: item["brightness"],reverse=True)[0]
+    bright += randrange(-10, 10) / 100
+    minpattern = sorted(filter(lambda d: d["type"] in typeList, patterns), key=lambda item: item["brightness"], reverse=True)[0]
     for pattern in patterns:
-        if pattern["brightness"] > bright and bright < minpattern["brightness"]:
-            minpattern = pattern
+        if pattern["type"] in typeList:
+            if pattern["brightness"] > bright and  pattern["brightness"] < minpattern["brightness"]:
+                minpattern = pattern
+
     chosen_count[minpattern["name"]] += 1
     return minpattern
 
@@ -108,13 +111,13 @@ def pfilter(pix):
 
 def greenTransparent(pixel, portel):
     pix = [0, 0 ,0]
-    opacity = 0
+    opacity = 0.15
     if pixelIsColor(pixel, (255, 255, 255), 15):
-       opacity = 0
-    if pixelIsColor(pixel, (0, 0, 0),1): 
        opacity = 0.1
-    if pixelIsColor(pixel, colors["water"],10):
+    if pixelIsColor(pixel, (0, 0, 0),1): 
        opacity = 0.2
+    if pixelIsColor(pixel, colors["water"],10):
+       opacity = 0.25
     pix = [pixel[0] * (1-opacity) + portel[0] * opacity,
     pixel[1] * (1-opacity) + portel[1] * opacity,
     pixel[2] * (1-opacity) + portel[2] * opacity]
@@ -180,28 +183,28 @@ def findCluster(x,y, dir=False, n=0, typ=False):
             return c
 
     if not dir:
+        c += findCluster(x,y+1, "up", n, typ)
         c += findCluster(x+1,y, "right", n, typ)
         c += findCluster(x,y-1,"down", n, typ)
-        c += findCluster(x,y+1, "up", n, typ)
         c += findCluster(x-1,y,  "left", n, typ)
         return c
-    if dir == "up":
-        c += findCluster(x,y+1, "up",  n, typ)
+    if dir != "down":
         c += findCluster(x-1,y,  "left", n, typ)
+        c += findCluster(x,y+1, "up", n, typ)
         c += findCluster(x+1,y, "right", n, typ)
-    elif dir == "left" :
-        c += findCluster(x+1,y, "left",  n, typ)
-        c += findCluster(x,y+1, "up",  n, typ)
-        c += findCluster(x,y-1,"down", n, typ)
-    elif dir != "down" :
-        c += findCluster(x,y+1, "up",  n, typ)
-        c += findCluster(x+1,y, "right",  n, typ)  
-        c += findCluster(x-1,y,  "left",  n, typ)   
     elif dir != "right" :
-        c += findCluster(x+1,y, "right",  n, typ)
-        c += findCluster(x,y-1,"down",  n, typ)      
-        c += findCluster(x-1,y,  "left",  n, typ)
-        
+        c += findCluster(x,y+1, "up", n, typ)
+        c += findCluster(x,y-1,"down", n, typ)
+        c += findCluster(x-1,y,  "left", n, typ)
+    elif dir != "up" :
+        c += findCluster(x+1,y, "right", n, typ)
+        c += findCluster(x-1,y,  "left", n, typ)
+        c += findCluster(x,y-1,"down", n, typ)
+
+    elif dir != "left" :
+        c += findCluster(x,y+1, "up", n, typ)
+        c += findCluster(x+1,y, "right", n, typ)
+        c += findCluster(x,y-1,"down", n, typ)
     return c
         
 '''
@@ -253,8 +256,8 @@ while x < xwidth:
                 count_clustered_pixel += len(curr["pixels"])
                 if(len(clusters) % 1000 == 0):
                     print(f'\tat {round(100*(x*ywidth + y) / (xwidth * ywidth))}% found {len(clusters)} clusters {round(100*count_checked / count_clustered_pixel)/100} c/px')
-        y += 10
-    x += 10
+        y += 2
+    x += 2
 
 print(f'\t{count_clustered_pixel} pixels clustered')
 print(f'\ton avg {round(count_clustered_pixel / len(clusters))} px per cluster')
@@ -266,7 +269,7 @@ for clust in clusters:
     color = colorForCluster(clust)
     desiredBrightness = sum(color) / len(color) / 255
     if clust["typ"] == "buildings":
-        pattern = getMatchingPattern(["simple", "hand"], desiredBrightness)
+        pattern = getMatchingPattern(["simple"], desiredBrightness)
     elif clust["typ"] == "parks":
         pattern = getMatchingPattern(["nature"], desiredBrightness)
     else:
@@ -297,15 +300,19 @@ for clust in clusters:
             y /= maxd / patsize
             x = min(patsize -1, x)
             y = min(patsize -1, y)
-        elif maxd < patsize / 4 and maxd > 10:
+        elif maxd < patsize / 2 and maxd > 2:
             x *= 2
             y *= 2
-            x += xo
-            y += yo
+            if maxd < patsize / 4:    
+                x += xo
+                y += yo
             x = min(patsize -1, x)
             y = min(patsize -1, y)
         try:
-            pixels[pix[0], pix[1]] = pixelShiftBrightness(getPatternPixel(pattern, x, y, color), factor) 
+            if clust["typ"] == "parks":
+                pixels[pix[0], pix[1]] = pixelShiftBrightness(getPatternPixel(pattern, x, y, (200, 200, 200, 200)), factor) 
+            else:
+                pixels[pix[0], pix[1]] = pixelShiftBrightness(getPatternPixel(pattern, x, y, color), factor) 
         except Exception as e:
             print(x,y)
             raise e
@@ -324,7 +331,10 @@ if doFilter:
     print("--- %s seconds ---" % (time.time() - start_time))
 
 print("saving...")
-print("\t", chosen_count)
+for pat in chosen_count:
+    if chosen_count[pat] > 0:
+        print(f'\t {pat}: {chosen_count[pat]}')
 im.save(exportfile)
 print(exportfile)
+
 
