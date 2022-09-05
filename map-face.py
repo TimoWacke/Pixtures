@@ -18,8 +18,8 @@ for category in patternnames:
         patternfilelist.append(category + str(i) + ".png")
 
 padding = 10
-minEdgeSize = 4000
-patsize = round(minEdgeSize / 20)  # should be an even number
+minEdgeSize = 3000
+patsize = round(minEdgeSize / 15)  # should be an even number
 doFilter = True
 
 colors = {
@@ -111,11 +111,11 @@ def pfilter(pix):
 
 def greenTransparent(pixel, portel):
     pix = [0, 0 ,0]
-    opacity = 0.15
+    opacity = 0
     if pixelIsColor(pixel, (255, 255, 255), 15):
-       opacity = 0.1
+       opacity = 0
     if pixelIsColor(pixel, (0, 0, 0),1): 
-       opacity = 0.2
+       opacity = 0.15
     if pixelIsColor(pixel, colors["water"],10):
        opacity = 0.175
     pix = [pixel[0] * (1-opacity) + portel[0] * opacity,
