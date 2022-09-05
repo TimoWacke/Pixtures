@@ -121,7 +121,7 @@ def pfilter(pix):
 
 
 def greenTransparent(pixel, portel):
-    portel = pfilter(portel[0], portel[1], portel[2])
+    portel = pfilter([portel[0], portel[1], portel[2]])
     opacity = 0.25
     if pixelIsColor(pixel, (255, 255, 255), 15):
        opacity = 0
