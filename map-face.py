@@ -157,7 +157,7 @@ clustered = np.zeros(shape=(xwidth, ywidth))
 
 def findCluster(x,y, dir=False, n=0, typ=False):
     c=1
-    if n>800:
+    if n>200:
         return c
     n+=1
     if x >= xwidth or y >= ywidth:
