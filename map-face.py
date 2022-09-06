@@ -10,14 +10,13 @@ import time
 patterns = []
 chosen_count = {}
 
-patternnames = {"nature":5, "simple": 6, "hand": 16}
+patternnames = {"nature":5, "simple": 7, "hand": 16}
 patternfilelist = []
 
 for category in patternnames:
     for i in range(1, patternnames[category] + 1):
         patternfilelist.append(category + str(i) + ".png")
 
-padding = 10
 minEdgeSize = 2750
 patsize = min(350, round(minEdgeSize / 15))  # should be an even number
 doFilter = True
@@ -28,33 +27,17 @@ colors = {
 "water": [166, 192, 201]
 }
 
-def preparePattern(pat, loc, f):
-    pat = pat.resize((patsize+2*padding,patsize+2*padding))
-    pat = pat.crop((padding,padding, patsize+padding, patsize+padding))
-    paxels = pat.load()
-    pat.save(loc + "saved-" + f)
+
 
 print("preparing patterns...")
 start_time = time.time()
 for file in patternfilelist:
     try:
-        pat = Image.open("/root/Pixtures/patterns/saved-" + file)
+        pat = Image.open("/root/Pixtures/patterns/" + file)
     except:
-        try:
-            path = "/root/Pixtures/patterns/" 
-            pat = Image.open(path + file)
-            print("\t" + file, "from scratch...")
-            preparePattern(pat, path, file)
-            pat = Image.open(path + "saved-" + file)
-        except:
-            try:
-                path = "patterns/"
-                pat = Image.open(path + "saved-" + file)
-            except:
-                pat = Image.open(path  + file)                
-                print("\t" + file, "from scratch...")
-                preparePattern(pat, path, file)
-                pat = Image.open(path + "saved-" + file)
+        path = "patterns/"
+        pat = Image.open(path +  file)
+          
     pat = pat.resize((patsize, patsize))
     paxels = pat.load()
     h = 0
