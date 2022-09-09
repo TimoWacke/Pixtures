@@ -10,7 +10,7 @@ import time
 patterns = []
 chosen_count = {}
 
-patternnames = {"nature":5, "simple": 7, "hand": 16}
+patternnames = {"nature":5, "simple": 6, "hand": 16}
 patternfilelist = []
 
 for category in patternnames:
@@ -33,25 +33,27 @@ print("preparing patterns...")
 start_time = time.time()
 for file in patternfilelist:
     try:
-        pat = Image.open("/root/Pixtures/patterns/" + file)
+        try:
+            pat = Image.open("/root/Pixtures/patterns/" + file)
+        except:
+            path = "patterns/"
+            pat = Image.open(path +  file)
+            
+        pat = pat.resize((patsize, patsize))
+        paxels = pat.load()
+        h = 0
+        count = 0
+        for x in range(pat.size[0]):
+            for y in range(pat.size[1]):
+                pax = paxels[x,y]
+                opac = pax[3] / 255
+                h += (pax[0] + pax[1] + pax[2]) / 3 * opac + 255 * (1 - opac)
+                count += 1
+        h /= count * 255
+        chosen_count[file] = 0
+        patterns.append({"brightness": h, "pixels": paxels, "type": re.findall(r'(\S+)\d+\.png', file)[0], "name": file})
     except:
-        path = "patterns/"
-        pat = Image.open(path +  file)
-          
-    pat = pat.resize((patsize, patsize))
-    paxels = pat.load()
-    h = 0
-    count = 0
-    for x in range(pat.size[0]):
-        for y in range(pat.size[1]):
-            pax = paxels[x,y]
-            opac = pax[3] / 255
-            h += (pax[0] + pax[1] + pax[2]) / 3 * opac + 255 * (1 - opac)
-            count += 1
-    h /= count * 255
-    chosen_count[file] = 0
-    patterns.append({"brightness": h, "pixels": paxels, "type": re.findall(r'(\S+)\d+\.png', file)[0], "name": file})
-    
+        print("without pattern:", file)
 
 def getMatchingPattern(typeList, bright):
     bright += randrange(-10, 10) / 100
