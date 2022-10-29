@@ -136,7 +136,7 @@ try:
 except:
     pt = Image.open("img/portrait-src.png")
 try:
-    exportfile = sys.argv[1][:-4] - sys.argv[2]
+    exportfile = sys.argv[1][:-4] + sys.argv[2]
 except:
     exportfile = "img/edit_merged.png"
 
