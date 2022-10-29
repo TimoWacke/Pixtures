@@ -17,7 +17,7 @@ for category in patternnames:
     for i in range(1, patternnames[category] + 1):
         patternfilelist.append(category + str(i) + ".png")
 
-minEdgeSize = 2750
+minEdgeSize = int(sys.argv[3])
 patsize = min(350, round(minEdgeSize / 15))  # should be an even number
 doFilter = True
 
@@ -136,7 +136,7 @@ try:
 except:
     pt = Image.open("img/portrait-src.png")
 try:
-    exportfile = sys.argv[1][:-4] + "edit_merged.png"
+    exportfile = sys.argv[1][:-4] - sys.argv[2]
 except:
     exportfile = "img/edit_merged.png"
 
