@@ -321,6 +321,8 @@ for pat in chosen_count:
     if chosen_count[pat] > 0:
         print(f'\t {pat}: {chosen_count[pat]}')
 im.save(exportfile)
+print(im.size[0]) #print width as handover
+print(im.size[1]) #print height as handover
 print(exportfile)
 
 
