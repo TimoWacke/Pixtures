@@ -5,6 +5,7 @@ from random import randrange
 from functools import wraps
 import numpy as np
 from PIL import Image, ImageOps
+import glob
 import re
 import sys
 import time
@@ -18,3 +19,5 @@ important output :  third last is width of the image
                     second last is height of the image
                     last print is of image path
 """
+if __name__ == '__main__':
+    print("start")

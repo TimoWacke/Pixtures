@@ -4,7 +4,7 @@ from math import *
 from random import randrange
 import numpy as np
 from PIL import Image, ImageOps
-
+import glob
 
 '''
 after you opem an image with myImage.open(url) you can save it's pixels in an 2d array:
@@ -179,7 +179,7 @@ def colorForCluster(cluster):
 
 
 if __name__ == "__main__":
-    patterns, patternfilelist = ([] for i in range(2))
+    patterns, patternfilelist = [],[]
     chosen_count = {}
 
     patternnames = {"nature":5, "simple": 6, "hand": 16}
@@ -187,10 +187,13 @@ if __name__ == "__main__":
     for category in patternnames:
         for i in range(1, patternnames[category] + 1):
             patternfilelist.append(f'{category}{str(i)}.png')
+    # print(patternfilelist)
+    # patternfilelist = glob.glob("patterns/*.png")
+    # print(patternfilelist)
     try:
         minEdgeSize = int(sys.argv[3])
     except:
-        minEdgeSize = 2750
+        minEdgeSize = 750
 
 
     patsize = min(350, round(minEdgeSize / 15))  # should be an even number

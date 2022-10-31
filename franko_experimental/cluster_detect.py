@@ -1,48 +1,24 @@
-# import cv2
-# import numpy as np
-# from matplotlib import pyplot as plt
-
-# im = cv2.imread('img/city-map-src.png')
-# gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
-# # distance-transform
-# dist = cv2.distanceTransform(~gray, cv2.DIST_L1, 3)
-# # max distance
-# k = 10
-# bw = np.uint8(dist < k)
-# # remove extra padding created by distance-transform
-# kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (k, k))
-# bw2 = cv2.morphologyEx(bw, cv2.MORPH_ERODE, kernel)
-# # clusters
-# _, contours, _ = cv2.findContours(bw2, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-# # draw clusters and bounding-boxes
-# i = 0
-# print(len(contours))
-# for cnt in contours:
-#     x, y, w, h = cv2.boundingRect(cnt)
-#     cv2.rectangle(im, (x, y), (x+w, y+h), (0, 255, 0), 2)
-#     cv2.drawContours(im, contours, i, (255, 0, 0), 2)
-#     i += 1
-
-# plt.subplot(121); plt.imshow(im)
-# plt.subplot(122); plt.imshow(bw2)
-
-# import the necessary packages
-from sklearn.cluster import KMeans
+from skimage.io import imread
+from skimage.color import rgb2gray
+import numpy as np
 import matplotlib.pyplot as plt
-import argparse
-import utils
-import cv2
-# construct the argument parser and parse the arguments
-ap = argparse.ArgumentParser()
-ap.add_argument("-i", "--image", required = True, help = "Path to the image")
-ap.add_argument("-c", "--clusters", required = True, type = int,
-	help = "# of clusters")
-args = vars(ap.parse_args())
-# load the image and convert it from BGR to RGB so that
-# we can dispaly it with matplotlib
-image = cv2.imread(args["image"])
-image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-# show our image
-plt.figure()
-plt.axis("off")
-plt.imshow(image)
+# from matplotlib import inline
+from scipy import ndimage
+# Scaling the image pixels values within 0-1
+img = imread('img/city-map-src.png') / 255
+plt.imshow(img)
+plt.title('Original')
+plt.show()
+
+# For clustering the image using k-means, we first need to convert it into a 2-dimensional array
+image_2D = img.reshape(img.shape[0]*img.shape[1], img.shape[2])
+# Use KMeans clustering algorithm from sklearn.cluster to cluster pixels in image
+from sklearn.cluster import KMeans
+# tweak the cluster size and see what happens to the Output
+kmeans = KMeans(n_clusters=5, random_state=0).fit(image_2D)
+clustered = kmeans.cluster_centers_[kmeans.labels_]
+# Reshape back the image from 2D to 3D image
+clustered_3D = clustered.reshape(img.shape[0], img.shape[1], img.shape[2])
+plt.imshow(clustered_3D)
+plt.title('Clustered Image')
+plt.show()
