@@ -358,9 +358,3 @@ if __name__ == "__main__":
     print(im.size[0]) #print width as handover
     print(im.size[1]) #print height as handover
     print(exportfile)
-
-
-
-
-
-
