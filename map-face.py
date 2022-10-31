@@ -1,5 +1,6 @@
 
 from audioop import avg
+from http.client import NETWORK_AUTHENTICATION_REQUIRED
 from math import *
 from random import randrange
 import numpy as np
@@ -140,13 +141,20 @@ try:
 except:
     exportfile = "img/edit_merged.png"
 
-ratio = im.size[0] / im.size[1] # > 1 for horizontal
-neww = min(pt.size[0], pt.size[1] * ratio)
-newh = min(pt.size[1], pt.size[0] / ratio)
-left = round((pt.size[0]-neww)/2)
-top = round((pt.size[1]-newh)/2)
-right = round((pt.size[0]+neww)/2)
-bottom = round((pt.size[1]+newh)/2)
+imRatio = im.size[0] / im.size[1] # > 1 for horizontal
+ptRatio = pt.size[0] / pt.size[1] # > 1 for horizontal
+if ptRatio < imRatio:  # if portrait is wider then req map align the height  
+    pt2imH = im.size[1]
+    pt2imW = ptRatio * pt2imH
+else: 
+    pt2imW = im.size[0]
+    pt2imH = pt2imW / ptRatio
+
+pt = pt.resize((round(pt2imW), round(pt2imH)))
+left = max(0, round((pt2imW-im.size[0])/2))
+top = max(0, round((pt2imH-im.size[1])/2))
+right = round((im.size[0]))
+bottom = round((im.size[1]))
 pt = pt.crop((left,top,right,bottom))
 pt = pt.resize((round(max(minEdgeSize, minEdgeSize*ratio)),round(max(minEdgeSize, minEdgeSize / ratio))))
 im = im.resize((round(max(minEdgeSize, minEdgeSize*ratio)),round(max(minEdgeSize, minEdgeSize / ratio))))
