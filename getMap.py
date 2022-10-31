@@ -99,7 +99,7 @@ filename = f'/root/Pixtures/img/{lat}_{lng}_{zm}_{width}x{height}-{city}-map.png
 
 try:
     if not os.path.exists(filename):
-        print(screenshot(lat, lng, zm, filename))
+        print(screenshot(lat, lng, zm, width, height, filename))
     else:
         print("exists already")
 
