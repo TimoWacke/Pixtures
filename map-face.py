@@ -148,8 +148,8 @@ top = round((pt.size[1]-newh)/2)
 right = round((pt.size[0]+neww)/2)
 bottom = round((pt.size[1]+newh)/2)
 pt = pt.crop((left,top,right,bottom))
-pt = pt.resize(round(max(minEdgeSize, minEdgeSize*ratio)),round(max(minEdgeSize, minEdgeSize / ratio)))
-im = im.resize(round(max(minEdgeSize, minEdgeSize*ratio)),round(max(minEdgeSize, minEdgeSize / ratio)))
+pt = pt.resize((round(max(minEdgeSize, minEdgeSize*ratio)),round(max(minEdgeSize, minEdgeSize / ratio))))
+im = im.resize((round(max(minEdgeSize, minEdgeSize*ratio)),round(max(minEdgeSize, minEdgeSize / ratio))))
 
 
 pixels = im.load()
