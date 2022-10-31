@@ -8,57 +8,7 @@ from PIL import Image, ImageOps
 import re
 import sys
 import time
-patterns = []
-chosen_count = {}
 
-patternnames = {"nature":5, "simple": 6, "hand": 16}
-patternfilelist = []
-
-for category in patternnames:
-    for i in range(1, patternnames[category] + 1):
-        patternfilelist.append(category + str(i) + ".png")
-try:
-    minEdgeSize = int(sys.argv[3])
-except:
-    minEdgeSize = 750
-
-
-patsize = min(350, round(minEdgeSize / 15))  # should be an even number
-doFilter = True
-
-colors = {
-"buildings": [64, 64, 64],
-"parks": [81, 85, 63],
-"water": [166, 192, 201]
-}
-
-
-
-print("preparing patterns...")
-start_time = time.time()
-for file in patternfilelist:
-    try:
-        try:
-            pat = Image.open("/root/Pixtures/patterns/" + file)
-        except:
-            path = "patterns/"
-            pat = Image.open(path +  file)
-            
-        pat = pat.resize((patsize, patsize))
-        paxels = pat.load()
-        h = 0
-        count = 0
-        for x in range(pat.size[0]):
-            for y in range(pat.size[1]):
-                pax = paxels[x,y]
-                opac = pax[3] / 255
-                h += (pax[0] + pax[1] + pax[2]) / 3 * opac + 255 * (1 - opac)
-                count += 1
-        h /= count * 255
-        chosen_count[file] = 0
-        patterns.append({"brightness": h, "pixels": paxels, "type": re.findall(r'(\S+)\d+\.png', file)[0], "name": file})
-    except:
-        print("without pattern:", file)
 
 def getMatchingPattern(typeList, bright):
     bright += randrange(-10, 10) / 100
@@ -133,42 +83,6 @@ def greenTransparent(pixel, portel):
 
 
 
-try:
-    im = Image.open(sys.argv[1])
-except:
-    im = Image.open("img/city-map-src.png")
-try:
-    pt = Image.open("/root/Pixtures/img/" + sys.argv[2])
-    pt =  ImageOps.exif_transpose(pt)
-except:
-    pt = Image.open("img/portrait-src.png")
-try:
-    exportfile = sys.argv[1][:-4] + sys.argv[2]
-except:
-    exportfile = "img/edit_merged.png"
-
-imRatio = im.size[0] / im.size[1] # > 1 for horizontal
-ptRatio = pt.size[0] / pt.size[1] # > 1 for horizontal
-pt2imW = max(ptRatio * im.size[1], im.size[0])
-pt2imH = max(im.size[0] / ptRatio, im.size[1])
-
-pt = pt.resize((round(pt2imW), round(pt2imH)))
-left =round((pt2imW-im.size[0])/2)
-top = round((pt2imH-im.size[1])/2)
-right = round((im.size[0] + (pt2imW-im.size[0])/2 ))
-bottom = round((im.size[1] +(pt2imH-im.size[1])/2))
-pt = pt.crop((left,top,right,bottom))
-pt = pt.resize((round(max(minEdgeSize, minEdgeSize*imRatio)),round(max(minEdgeSize, minEdgeSize / imRatio))))
-im = im.resize((round(max(minEdgeSize, minEdgeSize*imRatio)),round(max(minEdgeSize, minEdgeSize / imRatio))))
-
-
-pixels = im.load()
-portix = pt.load()
-xwidth = pt.size[0]
-ywidth = pt.size[1]
-clusters = []
-curr = []
-clustered = np.zeros(shape=(xwidth, ywidth))
 
 def findCluster(x,y, dir=False, n=0, typ=False):
     c=1
@@ -244,96 +158,192 @@ def colorForCluster(cluster):
     b /= len(cluster["pixels"])
     return pfilter([r,g,b])
 
-print("--- %s seconds ---" % (time.time() - start_time))
-start_time = time.time()
-print("finding clusters...")
 
-x=0
-count_clustered_pixel = 0
-count_checked = 0
-while x < xwidth:   
-    y=0
-    while y < ywidth:
-        if not clustered[x][y]:
-            curr = {"typ": False, "pixels": []}
-            count_checked += findCluster(x,y)
-            if curr["typ"]:
-                clusters.append(curr)
-                count_clustered_pixel += len(curr["pixels"])
-                if(len(clusters) % 1000 == 0):
-                    print(f'\tat {round(100*(x*ywidth + y) / (xwidth * ywidth))}% found {len(clusters)} clusters {round(100*count_checked / count_clustered_pixel)/100} c/px')
-        y += 2
-    x += 2
 
-print(f'\t{count_clustered_pixel} pixels clustered')
-print(f'\ton avg {round(count_clustered_pixel / len(clusters))} px per cluster')
-print("--- %s seconds ---" % (time.time() - start_time))
-start_time = time.time()
-print("coloring clusters...")
-clust_counter = 0
-for clust in clusters:
-    color = colorForCluster(clust)
-    desiredBrightness = sum(color) / len(color) / 255
-    if clust["typ"] == "buildings":
-        pattern = getMatchingPattern(["simple"], desiredBrightness)
-    elif clust["typ"] == "parks":
-        pattern = getMatchingPattern(["nature"], desiredBrightness)
-    else:
-        continue
-    factor = desiredBrightness / pattern["brightness"]
-    maxx = 0
-    maxy = 0
-    minx = xwidth
-    miny = ywidth
-    for pix in clust["pixels"]:
-        if pix[0] > maxx:
-            maxx = pix[0]
-        if pix[0] < minx:
-            minx = pix[0]
-        if pix[1] > maxy:
-            maxy = pix[1]
-        if pix[1] < miny:
-            miny = pix[1]
-    maxd = max(maxx-minx, maxy-miny)
-    xo = randrange(round(patsize / 2))
-    yo = randrange(round(patsize / 2))
-    for pix in clust["pixels"]:
-        x = pix[0] - minx
-        y = pix[1] - miny
-  
-        x += xo
-        y += yo
-        x = x % patsize
-        y = y % patsize 
+if __name__ == "__main__":
+    patterns = []
+    chosen_count = {}
+
+    patternnames = {"nature":5, "simple": 6, "hand": 16}
+    patternfilelist = []
+
+    for category in patternnames:
+        for i in range(1, patternnames[category] + 1):
+            patternfilelist.append(category + str(i) + ".png")
+    try:
+        minEdgeSize = int(sys.argv[3])
+    except:
+        minEdgeSize = 750
+
+
+    patsize = min(350, round(minEdgeSize / 15))  # should be an even number
+    doFilter = True
+
+    colors = {
+    "buildings": [64, 64, 64],
+    "parks": [81, 85, 63],
+    "water": [166, 192, 201]
+    }
+
+
+
+    print("preparing patterns...")
+    start_time = time.time()
+    for file in patternfilelist:
         try:
-            if clust["typ"] == "parks":
-                pixels[pix[0], pix[1]] = getPatternPixel(pattern, x, y, colors["parks"])
-            else:
-                pixels[pix[0], pix[1]] = pixelShiftBrightness(getPatternPixel(pattern, x, y, color), factor) 
-        except Exception as e:
-            print(x,y)
-            raise e
-    
-    clust_counter += 1
-    if clust_counter % 1000 == 0:
-        print(f'\t{round(clust_counter / len(clusters) * 100)}% done')
+            try:
+                pat = Image.open("/root/Pixtures/patterns/" + file)
+            except:
+                path = "patterns/"
+                pat = Image.open(path +  file)
+                
+            pat = pat.resize((patsize, patsize))
+            paxels = pat.load()
+            h = 0
+            count = 0
+            for x in range(pat.size[0]):
+                for y in range(pat.size[1]):
+                    pax = paxels[x,y]
+                    opac = pax[3] / 255
+                    h += (pax[0] + pax[1] + pax[2]) / 3 * opac + 255 * (1 - opac)
+                    count += 1
+            h /= count * 255
+            chosen_count[file] = 0
+            patterns.append({"brightness": h, "pixels": paxels, "type": re.findall(r'(\S+)\d+\.png', file)[0], "name": file})
+        except:
+            print("without pattern:", file)
+            
+    try:
+        im = Image.open(sys.argv[1])
+    except:
+        im = Image.open("img/city-map-src.png")
+    try:
+        pt = Image.open("/root/Pixtures/img/" + sys.argv[2])
+        pt =  ImageOps.exif_transpose(pt)
+    except:
+        pt = Image.open("img/portrait-src.png")
+    try:
+        exportfile = sys.argv[1][:-4] + sys.argv[2]
+    except:
+        exportfile = "img/edit_merged.png"
 
-print("--- %s seconds ---" % (time.time() - start_time))
-start_time = time.time()
-if doFilter:                
-    print("applying filters...")
-    for x in range(xwidth):   
-        for  y in range(ywidth):     
-            pixels[x,y] = greenTransparent(pixels[x, y], portix[x, y])
+    imRatio = im.size[0] / im.size[1] # > 1 for horizontal
+    ptRatio = pt.size[0] / pt.size[1] # > 1 for horizontal
+    pt2imW = max(ptRatio * im.size[1], im.size[0])
+    pt2imH = max(im.size[0] / ptRatio, im.size[1])
+
+    pt = pt.resize((round(pt2imW), round(pt2imH)))
+    left =round((pt2imW-im.size[0])/2)
+    top = round((pt2imH-im.size[1])/2)
+    right = round((im.size[0] + (pt2imW-im.size[0])/2 ))
+    bottom = round((im.size[1] +(pt2imH-im.size[1])/2))
+    pt = pt.crop((left,top,right,bottom))
+    pt = pt.resize((round(max(minEdgeSize, minEdgeSize*imRatio)),round(max(minEdgeSize, minEdgeSize / imRatio))))
+    im = im.resize((round(max(minEdgeSize, minEdgeSize*imRatio)),round(max(minEdgeSize, minEdgeSize / imRatio))))
+
+
+    pixels = im.load()
+    portix = pt.load()
+    xwidth = pt.size[0]
+    ywidth = pt.size[1]
+    clusters = []
+    curr = []
+    clustered = np.zeros(shape=(xwidth, ywidth))
+
     print("--- %s seconds ---" % (time.time() - start_time))
+    start_time = time.time()
+    print("finding clusters...")
 
-print("saving...")
-for pat in chosen_count:
-    if chosen_count[pat] > 0:
-        print(f'\t {pat}: {chosen_count[pat]}')
-im.save(exportfile)
-print(im.size[0]) #print width as handover
-print(im.size[1]) #print height as handover
-print(exportfile)
+    x=0
+    count_clustered_pixel = 0
+    count_checked = 0
+    while x < xwidth:   
+        y=0
+        while y < ywidth:
+            if not clustered[x][y]:
+                curr = {"typ": False, "pixels": []}
+                count_checked += findCluster(x,y)
+                if curr["typ"]:
+                    clusters.append(curr)
+                    count_clustered_pixel += len(curr["pixels"])
+                    if(len(clusters) % 1000 == 0):
+                        print(f'\tat {round(100*(x*ywidth + y) / (xwidth * ywidth))}% found {len(clusters)} clusters {round(100*count_checked / count_clustered_pixel)/100} c/px')
+            y += 2
+        x += 2
+
+    print(f'\t{count_clustered_pixel} pixels clustered')
+    print(f'\ton avg {round(count_clustered_pixel / len(clusters))} px per cluster')
+    print("--- %s seconds ---" % (time.time() - start_time))
+    start_time = time.time()
+    print("coloring clusters...")
+    clust_counter = 0
+    for clust in clusters:
+        color = colorForCluster(clust)
+        desiredBrightness = sum(color) / len(color) / 255
+        if clust["typ"] == "buildings":
+            pattern = getMatchingPattern(["simple"], desiredBrightness)
+        elif clust["typ"] == "parks":
+            pattern = getMatchingPattern(["nature"], desiredBrightness)
+        else:
+            continue
+        factor = desiredBrightness / pattern["brightness"]
+        maxx = 0
+        maxy = 0
+        minx = xwidth
+        miny = ywidth
+        for pix in clust["pixels"]:
+            if pix[0] > maxx:
+                maxx = pix[0]
+            if pix[0] < minx:
+                minx = pix[0]
+            if pix[1] > maxy:
+                maxy = pix[1]
+            if pix[1] < miny:
+                miny = pix[1]
+        maxd = max(maxx-minx, maxy-miny)
+        xo = randrange(round(patsize / 2))
+        yo = randrange(round(patsize / 2))
+        for pix in clust["pixels"]:
+            x = pix[0] - minx
+            y = pix[1] - miny
+    
+            x += xo
+            y += yo
+            x = x % patsize
+            y = y % patsize 
+            try:
+                if clust["typ"] == "parks":
+                    pixels[pix[0], pix[1]] = getPatternPixel(pattern, x, y, colors["parks"])
+                else:
+                    pixels[pix[0], pix[1]] = pixelShiftBrightness(getPatternPixel(pattern, x, y, color), factor) 
+            except Exception as e:
+                print(x,y)
+                raise e
+        
+        clust_counter += 1
+        if clust_counter % 1000 == 0:
+            print(f'\t{round(clust_counter / len(clusters) * 100)}% done')
+
+    print("--- %s seconds ---" % (time.time() - start_time))
+    start_time = time.time()
+    if doFilter:                
+        print("applying filters...")
+        for x in range(xwidth):   
+            for  y in range(ywidth):     
+                pixels[x,y] = greenTransparent(pixels[x, y], portix[x, y])
+        print("--- %s seconds ---" % (time.time() - start_time))
+
+    print("saving...")
+    for pat in chosen_count:
+        if chosen_count[pat] > 0:
+            print(f'\t {pat}: {chosen_count[pat]}')
+    im.save(exportfile)
+    print(im.size[0]) #print width as handover
+    print(im.size[1]) #print height as handover
+    print(exportfile)
+
+
+
+
 
 
