@@ -4,7 +4,7 @@ from http.client import NETWORK_AUTHENTICATION_REQUIRED
 from math import *
 from random import randrange
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageOps
 import re
 import sys
 import time
@@ -134,6 +134,7 @@ except:
     im = Image.open("img/city-map-src.png")
 try:
     pt = Image.open("/root/Pixtures/img/" + sys.argv[2])
+    pt =  ImageOps.exif_transpose(pt)
 except:
     pt = Image.open("img/portrait-src.png")
 try:
