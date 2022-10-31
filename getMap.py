@@ -38,7 +38,7 @@ def startSession():
         print("exec driver path")
         driver = webdriver.Chrome(executable_path="//root/.wdm/drivers/chromedriver/linux64/105.0.5195.52/chromedriver",options=getOptions())
     driver.set_window_position(0,0)
-    driver.set_window_size(sys.argv[4],sys.argv[5])
+    driver.set_window_size(int(sys.argv[4]),int(sys.argv[5]))
     #initializes the user agent
     driver.execute_script("return navigator.userAgent")
     return driver
