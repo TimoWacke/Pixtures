@@ -143,18 +143,14 @@ except:
 
 imRatio = im.size[0] / im.size[1] # > 1 for horizontal
 ptRatio = pt.size[0] / pt.size[1] # > 1 for horizontal
-if ptRatio < imRatio:  # if portrait is wider then req map align the height  
-    pt2imH = im.size[1]
-    pt2imW = ptRatio * pt2imH
-else: 
-    pt2imW = im.size[0]
-    pt2imH = pt2imW / ptRatio
+pt2imW = max(ptRatio * im.size[1], im.size[0])
+pt2imH = max(im.size[0] / ptRatio, im.size[1])
 
 pt = pt.resize((round(pt2imW), round(pt2imH)))
-left = max(0, round((pt2imW-im.size[0])/2))
-top = max(0, round((pt2imH-im.size[1])/2))
-right = round((im.size[0]))
-bottom = round((im.size[1]))
+left =round((pt2imW-im.size[0])/2)
+top = round((pt2imH-im.size[1])/2)
+right = round((im.size[0] + (pt2imW-im.size[0])/2 ))
+bottom = round((im.size[1] +(pt2imH-im.size[1])/2))
 pt = pt.crop((left,top,right,bottom))
 pt = pt.resize((round(max(minEdgeSize, minEdgeSize*imRatio)),round(max(minEdgeSize, minEdgeSize / imRatio))))
 im = im.resize((round(max(minEdgeSize, minEdgeSize*imRatio)),round(max(minEdgeSize, minEdgeSize / imRatio))))
