@@ -1,4 +1,3 @@
-
 from audioop import avg
 from http.client import NETWORK_AUTHENTICATION_REQUIRED
 from math import *
@@ -164,9 +163,7 @@ def pixelShiftBrightness(pixel, factor):
 
 
 def colorForCluster(cluster):
-    r = 0
-    g = 0
-    b = 0
+    r, g, b = 0, 0, 0
     for pix in cluster["pixels"]:
         try:
             r += portix[pix[0], pix[1]][0]
@@ -182,28 +179,27 @@ def colorForCluster(cluster):
 
 
 if __name__ == "__main__":
-    patterns = []
+    patterns, patternfilelist = ([] for i in range(2))
     chosen_count = {}
 
     patternnames = {"nature":5, "simple": 6, "hand": 16}
-    patternfilelist = []
 
     for category in patternnames:
         for i in range(1, patternnames[category] + 1):
-            patternfilelist.append(category + str(i) + ".png")
+            patternfilelist.append(f'{category}{str(i)}.png')
     try:
         minEdgeSize = int(sys.argv[3])
     except:
-        minEdgeSize = 750
+        minEdgeSize = 2750
 
 
     patsize = min(350, round(minEdgeSize / 15))  # should be an even number
     doFilter = True
 
     colors = {
-    "buildings": [64, 64, 64],
-    "parks": [81, 85, 63],
-    "water": [166, 192, 201]
+    "buildings": [64, 64, 64], #gray
+    "parks": [81, 85, 63], #green
+    "water": [166, 192, 201] #blue
     }
 
 
