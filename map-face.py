@@ -182,6 +182,7 @@ def colorForCluster(cluster):
 
 
 if __name__ == "__main__":
+
     patterns = []
     chosen_count = {}
 
