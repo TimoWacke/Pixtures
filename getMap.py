@@ -67,15 +67,17 @@ try:
     lat=sys.argv[1]
     lng=sys.argv[2]
     zm =sys.argv[3]
-    width=int(sys.argv[4])
-    height=int(sys.argv[5])
+    width=float(sys.argv[4])
+    height=float(sys.argv[5])
 
 except Exception as e:
     print("error:", e)
     print("use stockholm")
     lat = 59.34
     lng = 18.099
-    zm = 14
+    zm = 14    
+    width=1800
+    height=2400
 
 geolocator = Nominatim(user_agent="geoapiExercises")
 location = geolocator.reverse(f'{lat}, {lng}')

@@ -17,8 +17,12 @@ patternfilelist = []
 for category in patternnames:
     for i in range(1, patternnames[category] + 1):
         patternfilelist.append(category + str(i) + ".png")
+try:
+    minEdgeSize = int(sys.argv[3])
+except:
+    minEdgeSize = 750
 
-minEdgeSize = int(sys.argv[3])
+
 patsize = min(350, round(minEdgeSize / 15))  # should be an even number
 doFilter = True
 
