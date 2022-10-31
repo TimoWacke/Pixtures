@@ -30,7 +30,7 @@ def getOptions():
     return options
 
 #startSession() is used to keep the browser open through global 
-def startSession():
+def startSession(w, h):
     global driver
     try:
         driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),options=getOptions())
@@ -38,13 +38,13 @@ def startSession():
         print("exec driver path")
         driver = webdriver.Chrome(executable_path="//root/.wdm/drivers/chromedriver/linux64/105.0.5195.52/chromedriver",options=getOptions())
     driver.set_window_position(0,0)
-    driver.set_window_size(int(sys.argv[4]),int(sys.argv[5]))
+    driver.set_window_size(w,h)
     #initializes the user agent
     driver.execute_script("return navigator.userAgent")
     return driver
 
-def screenshot(lat,lng,zm, filename):
-    startSession()
+def screenshot(lat,lng,zm, w,h, filename):
+    startSession(w, h)
     print("selenium session started")
     #searchesthe eans
     url= f'https://framed.timopictur.es/html/map.html?lat={lat}lng={lng}zm={zm}'
@@ -67,6 +67,8 @@ try:
     lat=sys.argv[1]
     lng=sys.argv[2]
     zm =sys.argv[3]
+    width=int(sys.argv[4])
+    height=int(sys.argv[5])
 
 except Exception as e:
     print("error:", e)
@@ -93,7 +95,7 @@ else:
 print(city)
 
 
-filename = f'/root/Pixtures/img/{lat}_{lng}_{zm}-{city}-map.png'
+filename = f'/root/Pixtures/img/{lat}_{lng}_{zm}_{width}x{height}-{city}-map.png'
 
 try:
     if not os.path.exists(filename):
