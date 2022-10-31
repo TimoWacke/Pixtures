@@ -140,16 +140,17 @@ try:
 except:
     exportfile = "img/edit_merged.png"
 
-ratio = pt.size[0] / pt.size[1]
-neww = min(im.size[0], im.size[1] * ratio)
-newh = min(im.size[1], im.size[0] / ratio)
-left = round((im.size[0]-neww)/2)
-top = round((im.size[1]-newh)/2)
-right = round((im.size[0]+neww)/2)
-bottom = round((im.size[1]+newh)/2)
-im = im.crop((left,top,right,bottom))
-im = im.resize((round(minEdgeSize*ratio),minEdgeSize))
-pt = pt.resize((round(minEdgeSize*ratio),minEdgeSize))
+ratio = im.size[0] / im.size[1] # > 1 for horizontal
+neww = min(pt.size[0], pt.size[1] * ratio)
+newh = min(pt.size[1], pt.size[0] / ratio)
+left = round((pt.size[0]-neww)/2)
+top = round((pt.size[1]-newh)/2)
+right = round((pt.size[0]+neww)/2)
+bottom = round((pt.size[1]+newh)/2)
+pt = pt.crop((left,top,right,bottom))
+pt = pt.resize(round(max(minEdgeSize, minEdgeSize*ratio)),round(max(minEdgeSize, minEdgeSize / ratio)))
+im = im.resize(round(max(minEdgeSize, minEdgeSize*ratio)),round(max(minEdgeSize, minEdgeSize / ratio)))
+
 
 pixels = im.load()
 portix = pt.load()
