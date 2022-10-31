@@ -67,8 +67,8 @@ try:
     lat=sys.argv[1]
     lng=sys.argv[2]
     zm =sys.argv[3]
-    width=float(sys.argv[4])
-    height=float(sys.argv[5])
+    width=round(float(sys.argv[4]))
+    height=round(float(sys.argv[5]))
 
 except Exception as e:
     print("error:", e)
