@@ -5,11 +5,25 @@ from math import *
 from random import randrange
 import numpy as np
 from PIL import Image, ImageOps
+
+
+'''
+after you opem an image with myImage.open(url) you can save it's pixels in an 2d array:
+
+myPixels = myImage.load()
+
+myPixels  will be 2 dimensional carrying a quadtouple for every pixel.
+(255, 255, 255, 255) for RGB + Opacity
+
+
+'''
+
 import re
 import sys
 import time
 
 
+#gives you the pattern with the nearest average brightness to your desired brightness (0-1)
 def getMatchingPattern(typeList, bright):
     bright += randrange(-10, 10) / 100
     minpattern = sorted(filter(lambda d: d["type"] in typeList, patterns), key=lambda item: item["brightness"], reverse=True)[0]
@@ -21,9 +35,11 @@ def getMatchingPattern(typeList, bright):
     chosen_count[minpattern["name"]] += 1
     return minpattern
 
+#linear mathematics overblending 2 numbers by opacity
 def blVl(o, n, opac):
    return round((o * opac * n + (1-opac) * n))
 
+#pixel touple overblending
 def blendValue(old, new, opac=False):
     if not opac:
         opac = old[3] / 255
@@ -43,6 +59,7 @@ def linearBlendValue(old, new, opac):
 def getPatternPixel(pattern, x, y, color):
     pixel = pattern["pixels"][x,y]
     return blendValue(pixel, color)
+
 
 def pixelIsColor(pixel, color, tolerance):
     i = 0
@@ -84,6 +101,9 @@ def greenTransparent(pixel, portel):
 
 
 
+
+#starting at a given pixel x,y it will find all neighbor pixel in cluster (if pixel is not already clustered)
+#the pixels found will be added to a cluster in the global clusters array and will be marked as done in clustered numpy array
 def findCluster(x,y, dir=False, n=0, typ=False):
     c=1
     if n>200:
@@ -141,6 +161,7 @@ def integralOnGrid(x,y,b=0):
 
 def pixelShiftBrightness(pixel, factor):
     return (round(min(255, pixel[0] * factor)),round(min(255,pixel[1] * factor)), round(min(255,pixel[2] * factor)), pixel[3])
+
 
 def colorForCluster(cluster):
     r = 0
