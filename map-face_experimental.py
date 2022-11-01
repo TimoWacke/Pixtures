@@ -71,13 +71,125 @@ def resize_images(im,pt):
     im = im.resize((round(max(minEdgeSize, minEdgeSize*imRatio)),round(max(minEdgeSize, minEdgeSize / imRatio))))
     return im, pt
 
+def pixelIsColor(pixel, color, tolerance):
+    i = 0
+    for c in pixel:
+        if i < 3:
+            if c > color[i] + tolerance or c < color[i] - tolerance:
+                return False
+        i += 1
+    return True
+
+#cluster is a list of coordinates belonging to the cluster, portix is list of pixel toubles (r, g, b, a)
+def colorForCluster(portix, cluster): 
+    r, g, b = 0, 0, 0
+    for pix in cluster["pixels"]:
+        try:
+            r += portix[pix[0], pix[1]][0]
+            g += portix[pix[0], pix[1]][1]
+            b += portix[pix[0], pix[1]][2]
+        except:
+            print("err:", pix[0], pix[1] )
+    r /= len(cluster["pixels"])
+    g /= len(cluster["pixels"])
+    b /= len(cluster["pixels"])
+    return (r,g,b, 1)
+
+#x, y is the starting point of the recursive search, dir = Direction, n counts the recutsion calls 
+def findCluster(x,y, dir=False, n=0, typ=False):
+    c=1
+    if n>200:
+        return c
+    n+=1
+    if x >= xwidth or y >= ywidth:
+        return c
+    if clustered[x][y]:
+        return c
+
+    if typ:
+        if pixelIsColor(pixels[x, y], colors[typ], 15):
+            clustered[x][y] = True    
+            curr["pixels"].append([x, y])
+        else:
+            return c
+    else:
+        for color in colors:
+            if pixelIsColor(pixels[x, y], colors[color], 15):
+                typ = color
+                curr["typ"] = typ
+                clustered[x][y] = True
+                curr["pixels"].append([x, y])
+                break
+        if not typ:
+            return c
+
+    if  dir:
+        c += findCluster(x,y+1, "up", n, typ)
+        c += findCluster(x+1,y, "right", n, typ)
+        c += findCluster(x,y-1,"down", n, typ)
+        c += findCluster(x-1,y,  "left", n, typ)
+        return c
+    if dir != "up" :
+        c += findCluster(x,y-1,"down", n, typ)
+    if dir != "right" :
+        c += findCluster(x-1,y,  "left", n, typ)
+    if dir != "down":
+        c += findCluster(x,y+1, "up", n, typ)
+    if dir != "left" :
+        c += findCluster(x+1,y, "right", n, typ)
+    return c
 
 if __name__ == '__main__':
 
+
+    colors = {
+    "buildings": [64, 64, 64], #gray
+    "parks": [81, 85, 63], #green
+    "water": [166, 192, 201] #blue
+    }
+
+
     im = load_image("city")
     pt = load_image("user")
+    
+    
+    xwidth = pt.size[0]
+    ywidth = pt.size[1]
+
     exportfile = get_export_path()
     im, pt = resize_images(im,pt)
+    pixels = im.load()   # to recolor a pixel use: pixels[x, y] = (r, g, b, a) 
+    portix = pt.load()
+
+    xwidth = pt.size[0]
+    ywidth = pt.size[1]
+    clusters = []
+    curr = []
+    clustered = np.zeros(shape=(xwidth, ywidth))
+
+    print("finding clusters...")
+    start_time = time.time()
+    x=0
+    count_clustered_pixel = 0
+    count_checked = 0
+    while x < xwidth:   
+        y=0
+        while y < ywidth:
+            if not clustered[x][y]:
+                curr = {"typ": False, "pixels": []}
+                count_checked += findCluster(x,y)
+                if curr["typ"]:
+                    clusters.append(curr)
+                    count_clustered_pixel += len(curr["pixels"])
+                    if(len(clusters) % 1000 == 0):
+                        print(f'\tat {round(100*(x*ywidth + y) / (xwidth * ywidth))}% found {len(clusters)} clusters {round(100*count_checked / count_clustered_pixel)/100} c/px')
+            y += 2
+        x += 2
+
+    print(f'\t{count_clustered_pixel} pixels clustered')
+    print(f'\ton avg {round(count_clustered_pixel / len(clusters))} px per cluster')
+    print("--- %s seconds ---" % (time.time() - start_time))
+
 
     im.save(exportfile)
     print_dimension(im)
