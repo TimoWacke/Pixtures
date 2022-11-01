@@ -151,17 +151,14 @@ if __name__ == '__main__':
     im = load_image("city")
     pt = load_image("user")
     
-    
-    xwidth = pt.size[0]
-    ywidth = pt.size[1]
 
     exportfile = get_export_path()
     im, pt = resize_images(im,pt)
     pixels = im.load()   # to recolor a pixel use: pixels[x, y] = (r, g, b, a) 
     portix = pt.load()
 
-    xwidth = pt.size[0]
-    ywidth = pt.size[1]
+    xwidth = im.size[0]
+    ywidth = im.size[1]
     clusters = []
     curr = []
     clustered = np.zeros(shape=(xwidth, ywidth))
