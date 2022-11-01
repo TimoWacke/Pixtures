@@ -9,7 +9,6 @@ import glob
 import re
 import sys
 import time
-import cv2
 
 """
     This function is used to load a certain image either from its
