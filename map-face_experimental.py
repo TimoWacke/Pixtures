@@ -94,6 +94,14 @@ def colorForCluster(portix, cluster):
     b /= len(cluster["pixels"])
     return (r,g,b, 1)
 
+class Cluster:
+    def __init__(self, typ):
+        self.typ = typ
+        self.pixels = []
+    def addPixel(self, pixel):
+        self.pixels.append(pixel)
+
+
 #x, y is the starting point of the recursive search, dir = Direction, n counts the recutsion calls 
 def findCluster(x,y, dir=False, n=0, typ=False):
     c=1
