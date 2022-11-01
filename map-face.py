@@ -187,9 +187,7 @@ if __name__ == "__main__":
     for category in patternnames:
         for i in range(1, patternnames[category] + 1):
             patternfilelist.append(f'{category}{str(i)}.png')
-    # print(patternfilelist)
-    # patternfilelist = glob.glob("patterns/*.png")
-    # print(patternfilelist)
+
     try:
         minEdgeSize = int(sys.argv[3])
     except:
