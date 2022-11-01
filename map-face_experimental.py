@@ -104,50 +104,84 @@ class Cluster:
         for pix in pixels:
             self.addPixel(pix[0], pix[1])
 
+class Cluster_Process:
+    def __init__(self, im):
+        self.xwidth = im.size[0]
+        self.ywidth = im.size[1]
+        self.clustered = np.zeros(shape=(self.xwidth, self.ywidth))
+        self.clusters = []
+        self.findClusters()
 #x, y is the starting point of the recursive search, dir = Direction, n counts the recutsion calls 
-def findCluster(x,y, dir=False, n=0, typ=False):
-    foundPixels = []
-    if n>200:
-        return []
-    n+=1
-    if x >= xwidth or y >= ywidth:
-        return []
-    if clustered[x][y]:
-        return []
+    def findCluster(self,x,y, dir=False, n=0, typ=False):
+        xwidth = self.xwidth
+        ywidth = self.ywidth
+        clustered = self.clustered
+        foundPixels = []
+        if n>200:
+            return []
+        n+=1
+        if x >= xwidth or y >= ywidth:
+            return []
+        if clustered[x][y]:
+            return []
 
-    if typ:
-        if pixelIsColor(pixels[x, y], colors[typ], 15):
-            foundPixels.append([x, y])
-            clustered[x][y] = True    
+        if typ:
+            if pixelIsColor(pixels[x, y], colors[typ], 15):
+                foundPixels.append([x, y])
+                clustered[x][y] = True    
+            else:
+                return []
         else:
-            return []
-    else:
-        for color in colors:
-            if color != "water" and pixelIsColor(pixels[x, y], colors[color], 15):
-                typ = color
-                newCluster = Cluster(typ)
-                newCluster.addPixel(x, y)
-                clustered[x][y] = True
-                break
-        if not typ:
-            return []
+            for color in colors:
+                if color != "water" and pixelIsColor(pixels[x, y], colors[color], 15):
+                    typ = color
+                    newCluster = Cluster(typ)
+                    newCluster.addPixel(x, y)
+                    clustered[x][y] = True
+                    break
+            if not typ:
+                return []
 
-    if not dir:
-        newCluster.addPixels(findCluster(x,y+1, "up", n, typ))
-        newCluster.addPixels(findCluster(x+1,y, "right", n, typ))
-        newCluster.addPixels(findCluster(x,y-1,"down", n, typ))
-        newCluster.addPixels(findCluster(x-1,y,  "left", n, typ))
-        return newCluster 
+        if not dir:
+            newCluster.addPixels(Cluster_Process.findCluster(self,x,y+1, "up", n, typ))
+            newCluster.addPixels(Cluster_Process.findCluster(self,x+1,y, "right", n, typ))
+            newCluster.addPixels(Cluster_Process.findCluster(self,x,y-1,"down", n, typ))
+            newCluster.addPixels(Cluster_Process.findCluster(self,x-1,y,  "left", n, typ))
+            return newCluster 
 
-    if dir != "up" :
-        foundPixels.extend(findCluster(x,y-1,"down", n, typ))
-    if dir != "right" :
-        foundPixels.extend(findCluster(x-1,y,  "left", n, typ))
-    if dir != "down":
-       foundPixels.extend(findCluster(x,y+1, "up", n, typ))
-    if dir != "left" :
-       foundPixels.extend(findCluster(x+1,y, "right", n, typ))
-    return foundPixels
+        if dir != "up" :
+            foundPixels.extend(self.findCluster(x,y-1,"down", n, typ))
+        if dir != "right" :
+            foundPixels.extend(self.findCluster(x-1,y,  "left", n, typ))
+        if dir != "down":
+            foundPixels.extend(self.findCluster(x,y+1, "up", n, typ))
+        if dir != "left" :
+            foundPixels.extend(self.findCluster(x+1,y, "right", n, typ))
+        return foundPixels
+
+    def findClusters(self):
+        xwidth = self.xwidth
+        ywidth = self.ywidth
+        clustered = self.clustered
+        clusters = self.clusters
+        x=0
+        count_clustered_pixel = 0
+        count_checked = 0
+        while x < xwidth:   
+            y=0
+            while y < ywidth:
+                if not clustered[x][y]:
+                    newclust = Cluster_Process.findCluster(self,x,y)
+                    if newclust != []:
+                        clusters.append(newclust)
+                        count_clustered_pixel += len(newclust.pixels)
+                        if(len(clusters) % 1000 == 0):
+                            print(f'\tat {round(100*(x*ywidth + y) / (xwidth * ywidth))}% found {len(clusters)} clusters {round(100*count_checked / count_clustered_pixel)/100} c/px')
+                y += 2
+            x += 2
+
+        print(f'\t{count_clustered_pixel} pixels clustered')
+        print(f'\ton avg {round(count_clustered_pixel / len(clusters))} px per cluster')
 
 if __name__ == '__main__':
 
@@ -168,31 +202,11 @@ if __name__ == '__main__':
     pixels = im.load()   # to recolor a pixel use: pixels[x, y] = (r, g, b, a) 
     portix = pt.load()
 
-    xwidth = im.size[0]
-    ywidth = im.size[1]
-    clusters = []
-    clustered = np.zeros(shape=(xwidth, ywidth))
+
 
     print("finding clusters...")
     start_time = time.time()
-    x=0
-    count_clustered_pixel = 0
-    count_checked = 0
-    while x < xwidth:   
-        y=0
-        while y < ywidth:
-            if not clustered[x][y]:
-                newclust = findCluster(x,y)
-                if newclust != []:
-                    clusters.append(newclust)
-                    count_clustered_pixel += len(newclust.pixels)
-                    if(len(clusters) % 1000 == 0):
-                        print(f'\tat {round(100*(x*ywidth + y) / (xwidth * ywidth))}% found {len(clusters)} clusters {round(100*count_checked / count_clustered_pixel)/100} c/px')
-            y += 2
-        x += 2
-
-    print(f'\t{count_clustered_pixel} pixels clustered')
-    print(f'\ton avg {round(count_clustered_pixel / len(clusters))} px per cluster')
+    Cluster_Process(im)
     print("--- %s seconds ---" % (time.time() - start_time))
 
 
