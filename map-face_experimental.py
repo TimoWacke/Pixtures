@@ -98,53 +98,56 @@ class Cluster:
     def __init__(self, typ):
         self.typ = typ
         self.pixels = []
-    def addPixel(self, pixel):
-        self.pixels.append(pixel)
-
+    def addPixel(self, x, y):
+        self.pixels.append([x ,y])
+    def addPixels(self, pixels):
+        for pix in pixels:
+            self.addPixel(pix)
 
 #x, y is the starting point of the recursive search, dir = Direction, n counts the recutsion calls 
 def findCluster(x,y, dir=False, n=0, typ=False):
-    c=1
+    foundPixels = []
     if n>200:
-        return c
+        return []
     n+=1
     if x >= xwidth or y >= ywidth:
-        return c
+        return []
     if clustered[x][y]:
-        return c
+        return []
 
     if typ:
         if pixelIsColor(pixels[x, y], colors[typ], 15):
+            foundPixels.append([x, y])
             clustered[x][y] = True    
-            curr["pixels"].append([x, y])
         else:
-            return c
+            return []
     else:
         for color in colors:
-            if pixelIsColor(pixels[x, y], colors[color], 15):
+            if color != "water" and pixelIsColor(pixels[x, y], colors[color], 15):
                 typ = color
-                curr["typ"] = typ
+                newCluster = Cluster(typ)
+                newCluster.addPixel(x, y)
                 clustered[x][y] = True
-                curr["pixels"].append([x, y])
                 break
         if not typ:
-            return c
+            return []
 
-    if  dir:
-        c += findCluster(x,y+1, "up", n, typ)
-        c += findCluster(x+1,y, "right", n, typ)
-        c += findCluster(x,y-1,"down", n, typ)
-        c += findCluster(x-1,y,  "left", n, typ)
-        return c
+    if not dir:
+        newCluster.addPixels(findCluster(x,y+1, "up", n, typ))
+        newCluster.addPixels(findCluster(x+1,y, "right", n, typ))
+        newCluster.addPixels(findCluster(x,y-1,"down", n, typ))
+        newCluster.addPixels(findCluster(x-1,y,  "left", n, typ))
+        return newCluster 
+
     if dir != "up" :
-        c += findCluster(x,y-1,"down", n, typ)
+        foundPixels.extend(findCluster(x,y-1,"down", n, typ))
     if dir != "right" :
-        c += findCluster(x-1,y,  "left", n, typ)
+        foundPixels.extend(findCluster(x-1,y,  "left", n, typ))
     if dir != "down":
-        c += findCluster(x,y+1, "up", n, typ)
+       foundPixels.extend(findCluster(x,y+1, "up", n, typ))
     if dir != "left" :
-        c += findCluster(x+1,y, "right", n, typ)
-    return c
+       foundPixels.extend(findCluster(x+1,y, "right", n, typ))
+    return foundPixels
 
 if __name__ == '__main__':
 
@@ -168,7 +171,6 @@ if __name__ == '__main__':
     xwidth = im.size[0]
     ywidth = im.size[1]
     clusters = []
-    curr = []
     clustered = np.zeros(shape=(xwidth, ywidth))
 
     print("finding clusters...")
@@ -180,11 +182,10 @@ if __name__ == '__main__':
         y=0
         while y < ywidth:
             if not clustered[x][y]:
-                curr = {"typ": False, "pixels": []}
-                count_checked += findCluster(x,y)
-                if curr["typ"]:
-                    clusters.append(curr)
-                    count_clustered_pixel += len(curr["pixels"])
+                newclust = findCluster(x,y)
+                if newclust != []:
+                    clusters.append(newclust)
+                    count_clustered_pixel += len(newclust.pixels)
                     if(len(clusters) % 1000 == 0):
                         print(f'\tat {round(100*(x*ywidth + y) / (xwidth * ywidth))}% found {len(clusters)} clusters {round(100*count_checked / count_clustered_pixel)/100} c/px')
             y += 2
