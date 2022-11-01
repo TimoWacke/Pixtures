@@ -102,7 +102,7 @@ class Cluster:
         self.pixels.append([x ,y])
     def addPixels(self, pixels):
         for pix in pixels:
-            self.addPixel(pix)
+            self.addPixel(pix[0], pix[1])
 
 #x, y is the starting point of the recursive search, dir = Direction, n counts the recutsion calls 
 def findCluster(x,y, dir=False, n=0, typ=False):
