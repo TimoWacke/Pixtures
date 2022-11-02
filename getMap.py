@@ -74,8 +74,8 @@ try:
     height=round(float(sys.argv[5]))
 
     resolutionShift = max(3000 / width, 1) 
-    width = max(width, 3000)
-    height = max(height, 3000 * height / width)
+    width  *= resolutionShift
+    height *= resolutionShift
     zm += math.log(resolutionShift, 2)
 
 except Exception as e:
