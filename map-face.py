@@ -191,7 +191,7 @@ if __name__ == "__main__":
     try:
         minEdgeSize = int(sys.argv[3])
     except:
-        minEdgeSize = 750
+        minEdgeSize = 2750
 
 
     patsize = min(350, round(minEdgeSize / 15))  # should be an even number
