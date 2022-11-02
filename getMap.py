@@ -45,10 +45,7 @@ def startSession(w, h):
     return driver
 
 def screenshot(lat,lng,zm, w,h, filename):
-    resolutionShift = max(3000 / w, 1) 
-    w = max(w, 3000)
-    h = max(h, 3000 * h / w)
-    zm += math.log(resolutionShift, 2)
+
      
     startSession(w, h)
     print("selenium session started")
@@ -75,6 +72,11 @@ try:
     zm =sys.argv[3]
     width=round(float(sys.argv[4]))
     height=round(float(sys.argv[5]))
+
+    resolutionShift = max(3000 / width, 1) 
+    width = max(width, 3000)
+    height = max(height, 3000 * height / width)
+    zm += math.log(resolutionShift, 2)
 
 except Exception as e:
     print("error:", e)
