@@ -106,6 +106,7 @@ class Cluster:
 
 class Cluster_Process:
     def __init__(self, im):
+        self.pixels = im.load()
         self.xwidth = im.size[0]
         self.ywidth = im.size[1]
         self.clustered = np.zeros(shape=(self.xwidth, self.ywidth))
@@ -113,6 +114,7 @@ class Cluster_Process:
         self.findClusters()
 #x, y is the starting point of the recursive search, dir = Direction, n counts the recutsion calls 
     def findCluster(self,x,y, dir=False, n=0, typ=False):
+        pixels = self.pixels
         xwidth = self.xwidth
         ywidth = self.ywidth
         clustered = self.clustered
@@ -160,6 +162,7 @@ class Cluster_Process:
         return foundPixels
 
     def findClusters(self):
+        pixels = self.pixels
         xwidth = self.xwidth
         ywidth = self.ywidth
         clustered = self.clustered
@@ -199,7 +202,7 @@ if __name__ == '__main__':
 
     exportfile = get_export_path()
     im, pt = resize_images(im,pt)
-    pixels = im.load()   # to recolor a pixel use: pixels[x, y] = (r, g, b, a) 
+    # pixels = im.load()   # to recolor a pixel use: pixels[x, y] = (r, g, b, a) 
     portix = pt.load()
 
 
