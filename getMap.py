@@ -53,7 +53,7 @@ def screenshot(lat,lng,zm, w,h, filename):
     url= f'https://framed.timopictur.es/html/map.html?lat={lat}lng={lng}zm={zm}'
     print("site opened")
     driver.get(url)
-    time.sleep(8)
+    time.sleep(7)
     
     print("screenshot...")
     # WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH,\
@@ -73,7 +73,7 @@ try:
     width=round(float(sys.argv[4]))
     height=round(float(sys.argv[5]))
 
-    resolutionShift = max(2500 / width, 1) 
+    resolutionShift = max(1500 / width, 1) 
     width  *= resolutionShift
     height *= resolutionShift
     zm += math.log(resolutionShift, 2)
