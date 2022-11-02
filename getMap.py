@@ -67,9 +67,9 @@ def screenshot(lat,lng,zm, w,h, filename):
 
 
 try:
-    lat=sys.argv[1]
-    lng=sys.argv[2]
-    zm =sys.argv[3]
+    lat=float(sys.argv[1])
+    lng=float(sys.argv[2])
+    zm =float(sys.argv[3])
     width=round(float(sys.argv[4]))
     height=round(float(sys.argv[5]))
 
