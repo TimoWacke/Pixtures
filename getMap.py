@@ -12,6 +12,7 @@ from geopy.geocoders import Nominatim
 import sys
 import time
 import json
+import math
 import os
 #some standard imports
 
@@ -44,13 +45,18 @@ def startSession(w, h):
     return driver
 
 def screenshot(lat,lng,zm, w,h, filename):
+    resolutionShift = max(3000 / w, 1) 
+    w = max(w, 3000)
+    h = max(h, 3000 * h / w)
+    zm += math.log(resolutionShift, 2)
+     
     startSession(w, h)
     print("selenium session started")
     #searchesthe eans
     url= f'https://framed.timopictur.es/html/map.html?lat={lat}lng={lng}zm={zm}'
     print("site opened")
     driver.get(url)
-    time.sleep(4)
+    time.sleep(6)
     
     print("screenshot...")
     # WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH,\
