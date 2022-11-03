@@ -73,7 +73,7 @@ try:
     width=round(float(sys.argv[4]))
     height=round(float(sys.argv[5]))
 
-    resolutionShift = max(1500 / width, 1) 
+    resolutionShift = max(900 / width, 1) 
     width  *= resolutionShift
     height *= resolutionShift
     zm += math.log(resolutionShift, 2)
