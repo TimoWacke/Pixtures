@@ -1,7 +1,7 @@
 import math
 
 
-digits = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+digits = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9","10"]
 
 def r(x):
     return (math.sqrt(2 * math.pi * x) * (x / math.e)**x)
