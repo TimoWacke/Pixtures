@@ -15,13 +15,9 @@ import json
 import math
 import os
 #some standard imports
-from collections import MutableMapping
-import collections 
-if sys.version_info.major == 3 and sys.version_info.minor >= 10:
-
-    from collections.abc import MutableMapping
-else:
-    from collections import MutableMapping
+import collections.abc
+import collections
+collections.MutableMapping = collections.abc.MutablesMapping
 
 print(sys.version)
 
