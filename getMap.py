@@ -16,6 +16,8 @@ import math
 import os
 #some standard imports
 
+print(sys.version)
+
 #used for standard options
 def getOptions():
     options = webdriver.ChromeOptions()

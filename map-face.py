@@ -1,5 +1,3 @@
-from audioop import avg
-from http.client import NETWORK_AUTHENTICATION_REQUIRED
 from math import *
 from random import randrange
 import numpy as np
@@ -7,7 +5,7 @@ from PIL import Image, ImageOps
 import glob
 
 '''
-after you opem an image with myImage.open(url) you can save it's pixels in an 2d array:
+after you open an image with myImage.open(url) you can save it's pixels in an 2d array:
 
 myPixels = myImage.load()
 
@@ -21,6 +19,7 @@ import re
 import sys
 import time
 
+print(sys.version)
 
 #gives you the pattern with the nearest average brightness to your desired brightness (0-1)
 def getMatchingPattern(typeList, bright):
