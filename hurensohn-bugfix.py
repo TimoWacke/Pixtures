@@ -4,7 +4,3 @@
 import collections
 print(collections.MutableMapping)
 
-#👇️ New import for versions Python3.10+
-
-# ✅ <class 'collections.abc.MutableMapping'>
-print(collections.abc.MutableMapping)
