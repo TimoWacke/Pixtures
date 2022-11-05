@@ -10,7 +10,7 @@ except:
     pt = Image.open("img/portrait.png")
 
 width = 1000;
-scheme = 5;
+scheme = 15;
 pt = pt.resize((width, int(pt.size[1] * width / pt.size[0])))
 portix = pt.load()
 
