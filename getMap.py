@@ -14,10 +14,6 @@ import time
 import json
 import math
 import os
-#some standard imports
-import collections.abc
-import collections
-collections.MutableMapping = collections.abc.MutablesMapping
 
 print(sys.version)
 

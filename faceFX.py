@@ -7,7 +7,7 @@ import sys
 try:
     pt = Image.open("/root/Pixtures/img/" + sys.argv[1])
 except:
-    pt = Image.open("img/portrait.pnG")
+    pt = Image.open("img/portrait.png")
 
 width = 1000;
 scheme = 5;
