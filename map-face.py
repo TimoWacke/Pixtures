@@ -178,6 +178,7 @@ def colorForCluster(cluster):
 
 
 if __name__ == "__main__":
+    # done
     patterns, patternfilelist = [],[]
     chosen_count = {}
 
@@ -187,6 +188,7 @@ if __name__ == "__main__":
         for i in range(1, patternnames[category] + 1):
             patternfilelist.append(f'{category}{str(i)}.png')
 
+
     try:
         minEdgeSize = int(sys.argv[3])
     except:
@@ -194,6 +196,8 @@ if __name__ == "__main__":
 
 
     patsize = min(350, round(minEdgeSize / 15))  # should be an even number
+    
+    # doFilter is still unused 
     doFilter = True
 
     colors = {
@@ -229,6 +233,7 @@ if __name__ == "__main__":
             patterns.append({"brightness": h, "pixels": paxels, "type": re.findall(r'(\S+)\d+\.png', file)[0], "name": file})
         except:
             print("without pattern:", file)
+
             
     try:
         im = Image.open(sys.argv[1])
@@ -268,6 +273,7 @@ if __name__ == "__main__":
     clustered = np.zeros(shape=(xwidth, ywidth))
 
     print("--- %s seconds ---" % (time.time() - start_time))
+    print(patterns)
     start_time = time.time()
     print("finding clusters...")
 
@@ -291,6 +297,9 @@ if __name__ == "__main__":
     print(f'\t{count_clustered_pixel} pixels clustered')
     print(f'\ton avg {round(count_clustered_pixel / len(clusters))} px per cluster')
     print("--- %s seconds ---" % (time.time() - start_time))
+
+    # till here is finished and working, after this is still todo
+
     start_time = time.time()
     print("coloring clusters...")
     clust_counter = 0

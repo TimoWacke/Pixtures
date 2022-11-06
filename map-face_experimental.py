@@ -48,13 +48,16 @@ def get_export_path():
 def print_dimension(im):
     print(str(im.size[0]))
     print(str(im.size[1]))
-
-# This function is used to resize the two images together, based on given parameters. 
-def resize_images(im,pt):
+# this function is used to get the minimum edge size of the image
+def getminEdgeSize():
     try:
         minEdgeSize = int(sys.argv[3])
     except:
         minEdgeSize = 750
+    return minEdgeSize
+# This function is used to resize the two images together, based on given parameters. 
+def resize_images(im,pt):
+    minEdgeSize = getminEdgeSize()
     imRatio = im.size[0] / im.size[1] # > 1 for horizontal
     ptRatio = pt.size[0] / pt.size[1] # > 1 for horizontal
     pt2imW = max(ptRatio * im.size[1], im.size[0])
@@ -69,31 +72,7 @@ def resize_images(im,pt):
     pt = pt.resize((round(max(minEdgeSize, minEdgeSize*imRatio)),round(max(minEdgeSize, minEdgeSize / imRatio))))
     im = im.resize((round(max(minEdgeSize, minEdgeSize*imRatio)),round(max(minEdgeSize, minEdgeSize / imRatio))))
     return im, pt
-
-def pixelIsColor(pixel, color, tolerance):
-    i = 0
-    for c in pixel:
-        if i < 3:
-            if c > color[i] + tolerance or c < color[i] - tolerance:
-                return False
-        i += 1
-    return True
-
-#cluster is a list of coordinates belonging to the cluster, portix is list of pixel toubles (r, g, b, a)
-def colorForCluster(portix, cluster): 
-    r, g, b = 0, 0, 0
-    for pix in cluster["pixels"]:
-        try:
-            r += portix[pix[0], pix[1]][0]
-            g += portix[pix[0], pix[1]][1]
-            b += portix[pix[0], pix[1]][2]
-        except:
-            print("err:", pix[0], pix[1] )
-    r /= len(cluster["pixels"])
-    g /= len(cluster["pixels"])
-    b /= len(cluster["pixels"])
-    return (r,g,b, 1)
-
+# this is a class for the clusters
 class Cluster:
     def __init__(self, typ):
         self.typ = typ
@@ -103,7 +82,7 @@ class Cluster:
     def addPixels(self, pixels):
         for pix in pixels:
             self.addPixel(pix[0], pix[1])
-
+# this function is used to find the clusters in the image
 class Cluster_Process:
     def __init__(self, im):
         self.pixels = im.load()
@@ -111,8 +90,8 @@ class Cluster_Process:
         self.ywidth = im.size[1]
         self.clustered = np.zeros(shape=(self.xwidth, self.ywidth))
         self.clusters = []
-        self.findClusters()
-#x, y is the starting point of the recursive search, dir = Direction, n counts the recutsion calls 
+    #starting at a given pixel x,y it will find all neighbor pixel in cluster (if pixel is not already clustered)
+    #the pixels found will be added to a cluster in the global clusters array and will be marked as done in clustered numpy array
     def findCluster(self,x,y, dir=False, n=0, typ=False):
         pixels = self.pixels
         xwidth = self.xwidth
@@ -182,9 +161,84 @@ class Cluster_Process:
                             print(f'\tat {round(100*(x*ywidth + y) / (xwidth * ywidth))}% found {len(clusters)} clusters {round(100*count_checked / count_clustered_pixel)/100} c/px')
                 y += 2
             x += 2
-
         print(f'\t{count_clustered_pixel} pixels clustered')
         print(f'\ton avg {round(count_clustered_pixel / len(clusters))} px per cluster')
+        return self.clusters
+# this function gets the directory list of patterns
+def getPatternList():
+    patternfilelist = []
+
+    patternnames = {"nature":5, "simple": 6, "hand": 16}
+
+    for category in patternnames:
+        for i in range(1, patternnames[category] + 1):
+            patternfilelist.append(f'{category}{str(i)}.png')
+    return patternfilelist
+# uses the directory-list from above to load the patterns into a dictionary
+def loadPatterns(patternfilelist):
+    # getting needed variables
+    chosen_count = {}
+    patterns = []
+    minEdgeSize = getminEdgeSize()
+    
+    patsize = min(350, round(minEdgeSize / 15))  # should be an even number
+
+    # start timer
+    start_time = time.time()
+    print("preparing patterns...")
+
+    # load patterns - it would be nice if the OG-Dev would explain this
+    for file in patternfilelist:
+        try:
+            try:
+                pat = Image.open("/root/Pixtures/patterns/" + file)
+            except:
+                path = "patterns/"
+                pat = Image.open(path +  file)
+                
+            pat = pat.resize((patsize, patsize))
+            paxels = pat.load()
+            h = 0
+            count = 0
+            for x in range(pat.size[0]):
+                for y in range(pat.size[1]):
+                    pax = paxels[x,y]
+                    opac = pax[3] / 255
+                    h += (pax[0] + pax[1] + pax[2]) / 3 * opac + 255 * (1 - opac)
+                    count += 1
+            h /= count * 255
+            chosen_count[file] = 0
+            patterns.append({"brightness": h, "pixels": paxels, "type": re.findall(r'(\S+)\d+\.png', file)[0], "name": file})
+        except:
+            print("without pattern:", file)
+    print("--- %s seconds ---" % (time.time() - start_time))
+    # print (patterns)
+    return patterns, chosen_count
+
+def pixelIsColor(pixel, color, tolerance):
+    i = 0
+    for c in pixel:
+        if i < 3:
+            if c > color[i] + tolerance or c < color[i] - tolerance:
+                return False
+        i += 1
+    return True
+
+#cluster is a list of coordinates belonging to the cluster, portix is list of pixel toubles (r, g, b, a)
+def colorForCluster(portix, cluster): 
+    r, g, b = 0, 0, 0
+    for pix in cluster["pixels"]:
+        try:
+            r += portix[pix[0], pix[1]][0]
+            g += portix[pix[0], pix[1]][1]
+            b += portix[pix[0], pix[1]][2]
+        except:
+            print("err:", pix[0], pix[1] )
+    r /= len(cluster["pixels"])
+    g /= len(cluster["pixels"])
+    b /= len(cluster["pixels"])
+    return (r,g,b, 1)
+
 
 if __name__ == '__main__':
 
@@ -209,8 +263,12 @@ if __name__ == '__main__':
 
     print("finding clusters...")
     start_time = time.time()
-    Cluster_Process(im)
+    clusters = Cluster_Process(im).findClusters()
     print("--- %s seconds ---" % (time.time() - start_time))
+    # print(clusters)
+
+    # get the fileList of patterns and load the patterns with it
+    patterns, chosen_count = loadPatterns(getPatternList())
 
 
     im.save(exportfile)
