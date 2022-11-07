@@ -351,6 +351,8 @@ if __name__ == "__main__":
             print(f'\t{round(clust_counter / len(clusters) * 100)}% done')
 
     print("--- %s seconds ---" % (time.time() - start_time))
+
+    # here is the milestone
     start_time = time.time()
     if doFilter:                
         print("applying filters...")

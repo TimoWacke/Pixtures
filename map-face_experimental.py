@@ -53,7 +53,7 @@ def getminEdgeSize():
     try:
         minEdgeSize = int(sys.argv[3])
     except:
-        minEdgeSize = 750
+        minEdgeSize = 2750
     return minEdgeSize
 # This function is used to resize the two images together, based on given parameters. 
 def resize_images(im,pt):
@@ -141,6 +141,8 @@ class Cluster_Process:
         return foundPixels
 
     def findClusters(self):
+        print("finding clusters...")
+        start_time = time.time()
         pixels = self.pixels
         xwidth = self.xwidth
         ywidth = self.ywidth
@@ -163,6 +165,7 @@ class Cluster_Process:
             x += 2
         print(f'\t{count_clustered_pixel} pixels clustered')
         print(f'\ton avg {round(count_clustered_pixel / len(clusters))} px per cluster')
+        print("--- %s seconds ---" % (time.time() - start_time))
         return self.clusters
 # this function gets the directory list of patterns
 def getPatternList():
@@ -215,31 +218,165 @@ def loadPatterns(patternfilelist):
     # print (patterns)
     return patterns, chosen_count
 
+# functionality needs to be defined by Timo
 def pixelIsColor(pixel, color, tolerance):
-    i = 0
-    for c in pixel:
+    for i,c in enumerate(pixel):
         if i < 3:
             if c > color[i] + tolerance or c < color[i] - tolerance:
                 return False
-        i += 1
     return True
-
 #cluster is a list of coordinates belonging to the cluster, portix is list of pixel toubles (r, g, b, a)
 def colorForCluster(portix, cluster): 
     r, g, b = 0, 0, 0
-    for pix in cluster["pixels"]:
+    for pix in cluster.pixels:
         try:
             r += portix[pix[0], pix[1]][0]
             g += portix[pix[0], pix[1]][1]
             b += portix[pix[0], pix[1]][2]
         except:
             print("err:", pix[0], pix[1] )
-    r /= len(cluster["pixels"])
-    g /= len(cluster["pixels"])
-    b /= len(cluster["pixels"])
+    r /= len(cluster.pixels)
+    g /= len(cluster.pixels)
+    b /= len(cluster.pixels)
     return (r,g,b, 1)
+#gives you the pattern with the nearest average brightness to your desired brightness (0-1)
+def getMatchingPattern(typeList, bright):
+    bright += randrange(-10, 10) / 100
+    minpattern = sorted(filter(lambda d: d["type"] in typeList, patterns), key=lambda item: item["brightness"], reverse=True)[0]
+    for pattern in patterns:
+        if pattern["type"] in typeList:
+            if pattern["brightness"] > bright  and  pattern["brightness"] < minpattern["brightness"]:
+                minpattern = pattern
+
+    chosen_count[minpattern["name"]] += 1
+    return minpattern
 
 
+# he following 6 defs b1v1 , blendvalue, getPatternPixel, Pixelshiftbrightness, pfilter and greenTransparent are unknown in terms of functionality
+# Dev Timo needs to declare their precise functionality in as small of a comment as possible
+#linear mathematics overblending 2 numbers by opacity
+def blVl(o, n, opac):
+    return round((o * opac * n + (1-opac) * n))
+def blendValue(old, new, opac=False):
+    if not opac:
+        opac = old[3] / 255
+    return (
+        blVl(old[0], new[0], opac),
+        blVl(old[1], new[1], opac),
+        blVl(old[2], new[2], opac),
+        255)
+def getPatternPixel(pattern, x, y, color):
+    pixel = pattern["pixels"][x,y]
+    return blendValue(pixel, color)
+def pixelShiftBrightness(pixel, factor):
+    return (round(min(255, pixel[0] * factor)),round(min(255,pixel[1] * factor)), round(min(255,pixel[2] * factor)), pixel[3])
+def pfilter(pix):
+    saturation = 0.5
+    for i in range(3):
+        pix[i] = round(pix[i] * saturation + (sum(pix) / len(pix)) * (1- saturation))
+    return (pix[0], pix[1], pix[2], 255)
+def greenTransparent(pixel, portel):
+    portel = pfilter([portel[0], portel[1], portel[2]])
+    opacity = 0.15
+    if pixelIsColor(pixel, (255, 255, 255), 15):
+       opacity = 0
+    if pixelIsColor(pixel, (0, 0, 0),1): 
+       opacity = 0.15
+    if pixelIsColor(pixel, colors["water"],10):
+       opacity = 0.15
+    if pixelIsColor(pixel, colors["parks"],10):
+       opacity = 0.4
+    
+    pix = [pixel[0] * (1-opacity) + portel[0] * opacity,
+    pixel[1] * (1-opacity) + portel[1] * opacity,
+    pixel[2] * (1-opacity) + portel[2] * opacity]
+
+    contrast = 0.8
+    for i, p in enumerate(pix):
+        pix[i] = max(min(255, round(p * contrast + 255 * (1-contrast) / 2)), 0)
+    return (pix[0], pix[1], pix[2], 255)
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# colors the clusters of given image
+def coloringClusters(im,pt, clusters):
+    # loading basic values
+    portix = pt.load()
+    pixels = im.load()
+    xwidth = im.size[0]
+    ywidth = im.size[1]
+    minEdgeSize = getminEdgeSize()
+    patsize = min(350, round(minEdgeSize / 15))  # should be an even number
+
+    # start timer
+    start_time = time.time()
+    print("coloring clusters...")
+
+    # coloring clusters
+    for clust_counter, clust in enumerate(clusters):
+        color = colorForCluster(portix, clust)
+        desiredBrightness = sum(color) / len(color) / 255
+        if clust.typ == "buildings":
+            pattern = getMatchingPattern(["simple"], desiredBrightness)
+        elif clust.typ == "parks":
+            pattern = getMatchingPattern(["nature"], desiredBrightness)
+        else:
+            continue
+        factor = desiredBrightness / pattern["brightness"]
+        maxx = 0
+        maxy = 0
+        minx = xwidth
+        miny = ywidth
+        for pix in clust.pixels:
+            if pix[0] > maxx:
+                maxx = pix[0]
+            if pix[0] < minx:
+                minx = pix[0]
+            if pix[1] > maxy:
+                maxy = pix[1]
+            if pix[1] < miny:
+                miny = pix[1]
+        maxd = max(maxx-minx, maxy-miny)
+        xo = randrange(round(patsize / 2))
+        yo = randrange(round(patsize / 2))
+        for pix in clust.pixels:
+            x = pix[0] - minx
+            y = pix[1] - miny
+    
+            x += xo
+            y += yo
+            x = x % patsize
+            y = y % patsize 
+            try:
+                if clust.typ == "parks":
+                    pixels[pix[0], pix[1]] = getPatternPixel(pattern, x, y, colors["parks"])
+                else:
+                    pixels[pix[0], pix[1]] = pixelShiftBrightness(getPatternPixel(pattern, x, y, color), factor) 
+            except Exception as e:
+                print(x,y)
+                raise e
+        
+        if clust_counter % 1000 == 0:
+            print(f'\t{round(clust_counter / len(clusters) * 100)}% done')
+
+    print("--- %s seconds ---" % (time.time() - start_time))
+# applies filters onto image
+def applyFilter(im, pt):
+    pixels = im.load()
+    portix = pt.load()
+    xwidth = im.size[0]
+    ywidth = im.size[1]
+    start_time = time.time()              
+    print("applying filters...")
+    for x in range(xwidth):   
+        for  y in range(ywidth):     
+            pixels[x,y] = greenTransparent(pixels[x, y], portix[x, y])
+    print("--- %s seconds ---" % (time.time() - start_time))
+# shows patterns which were used
+def showPats():
+    for pat in chosen_count:
+        if chosen_count[pat] > 0:
+            print(f'\t {pat}: {chosen_count[pat]}')
+# start of main function
 if __name__ == '__main__':
 
 
@@ -257,19 +394,22 @@ if __name__ == '__main__':
     exportfile = get_export_path()
     im, pt = resize_images(im,pt)
     # pixels = im.load()   # to recolor a pixel use: pixels[x, y] = (r, g, b, a) 
-    portix = pt.load()
+    # portix = pt.load()
 
-
-
-    print("finding clusters...")
-    start_time = time.time()
+    # the clusters are getting created here and saved
     clusters = Cluster_Process(im).findClusters()
-    print("--- %s seconds ---" % (time.time() - start_time))
+
     # print(clusters)
 
     # get the fileList of patterns and load the patterns with it
     patterns, chosen_count = loadPatterns(getPatternList())
 
+    # coloring of the clusters
+    coloringClusters(im, pt, clusters)
+    # apply filters, if you dont want this just comment it out
+    applyFilter(im, pt)
+    # show the patterns that were used
+    showPats()
 
     im.save(exportfile)
     print_dimension(im)
