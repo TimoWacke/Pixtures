@@ -352,7 +352,6 @@ if __name__ == "__main__":
 
     print("--- %s seconds ---" % (time.time() - start_time))
 
-    # here is the milestone
     start_time = time.time()
     if doFilter:                
         print("applying filters...")
@@ -369,3 +368,4 @@ if __name__ == "__main__":
     print(im.size[0]) #print width as handover
     print(im.size[1]) #print height as handover
     print(exportfile)
+    # here is the milestone
