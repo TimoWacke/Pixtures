@@ -273,7 +273,7 @@ if __name__ == "__main__":
     clustered = np.zeros(shape=(xwidth, ywidth))
 
     print("--- %s seconds ---" % (time.time() - start_time))
-    print(patterns)
+    # print(patterns)
     start_time = time.time()
     print("finding clusters...")
 

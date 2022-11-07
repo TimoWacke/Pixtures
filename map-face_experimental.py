@@ -9,6 +9,7 @@ import glob
 import re
 import sys
 import time
+import cv2
 
 """
     This function is used to load a certain image either from its
@@ -298,10 +299,8 @@ def greenTransparent(pixel, portel):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # colors the clusters of given image
-def coloringClusters(im,pt, clusters):
+def coloringClusters(pixels, portix, clusters):
     # loading basic values
-    portix = pt.load()
-    pixels = im.load()
     xwidth = im.size[0]
     ywidth = im.size[1]
     minEdgeSize = getminEdgeSize()
@@ -335,13 +334,14 @@ def coloringClusters(im,pt, clusters):
                 maxy = pix[1]
             if pix[1] < miny:
                 miny = pix[1]
-        maxd = max(maxx-minx, maxy-miny)
+        # maxd was defined but never used so seems likea  useless variable, Dev Timo needs to explain
+        # maxd = max(maxx-minx, maxy-miny)
         xo = randrange(round(patsize / 2))
         yo = randrange(round(patsize / 2))
         for pix in clust.pixels:
             x = pix[0] - minx
             y = pix[1] - miny
-    
+
             x += xo
             y += yo
             x = x % patsize
@@ -360,17 +360,24 @@ def coloringClusters(im,pt, clusters):
 
     print("--- %s seconds ---" % (time.time() - start_time))
 # applies filters onto image
-def applyFilter(im, pt):
-    pixels = im.load()
-    portix = pt.load()
-    xwidth = im.size[0]
-    ywidth = im.size[1]
-    start_time = time.time()              
-    print("applying filters...")
-    for x in range(xwidth):   
-        for  y in range(ywidth):     
-            pixels[x,y] = greenTransparent(pixels[x, y], portix[x, y])
-    print("--- %s seconds ---" % (time.time() - start_time))
+def applyFilter(im, pt, on):
+    if on:
+        print("done")
+        pixels = im.load()
+        portix = pt.load()
+        pix_data = np.asarray(im, dtype="int32")
+        print(pix_data.ndim)
+        print(pix_data)
+        # xwidth = im.size[0]
+        # ywidth = im.size[1]
+        # start_time = time.time()              
+        # print("applying filters...")
+        # for x in range(xwidth):   
+        #     for  y in range(ywidth):     
+        #         pixels[x,y] = greenTransparent(pixels[x, y], portix[x, y])
+        # print("--- %s seconds ---" % (time.time() - start_time))
+    else:
+        print("skipping filters...")
 # shows patterns which were used
 def showPats():
     for pat in chosen_count:
@@ -393,8 +400,8 @@ if __name__ == '__main__':
 
     exportfile = get_export_path()
     im, pt = resize_images(im,pt)
-    # pixels = im.load()   # to recolor a pixel use: pixels[x, y] = (r, g, b, a) 
-    # portix = pt.load()
+    pixels = im.load()   # to recolor a pixel use: pixels[x, y] = (r, g, b, a) 
+    portix = pt.load()
 
     # the clusters are getting created here and saved
     clusters = Cluster_Process(im).findClusters()
@@ -405,9 +412,9 @@ if __name__ == '__main__':
     patterns, chosen_count = loadPatterns(getPatternList())
 
     # coloring of the clusters
-    coloringClusters(im, pt, clusters)
-    # apply filters, if you dont want this just comment it out
-    applyFilter(im, pt)
+    coloringClusters(pixels, portix, clusters)
+    # apply filters, if you dont want this just set parameter to False
+    applyFilter(im, pt, True)
     # show the patterns that were used
     showPats()
 
