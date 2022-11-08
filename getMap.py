@@ -33,7 +33,7 @@ def getOptions():
 
 #startSession() is used to keep the browser open through global 
 def startSession(w, h):
-    # global driver
+    global driver
     try:
         driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),options=getOptions())
     except Exception as e:
