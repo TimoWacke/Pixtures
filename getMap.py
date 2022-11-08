@@ -116,7 +116,7 @@ try:
 
 except:
     filename = filename[len("/root/Pixtures"):]
-    print(screenshot(lat, lng, zm, filename))
+    print(screenshot(lat, lng, zm, width, height, filename))
 
 print(filename)
 

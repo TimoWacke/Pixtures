@@ -54,7 +54,7 @@ def getminEdgeSize():
     try:
         minEdgeSize = int(sys.argv[3])
     except:
-        minEdgeSize = 2750
+        minEdgeSize = 1750
     return minEdgeSize
 # This function is used to resize the two images together, based on given parameters. 
 def resize_images(im,pt):
@@ -239,7 +239,7 @@ def colorForCluster(portix, cluster):
     r /= len(cluster.pixels)
     g /= len(cluster.pixels)
     b /= len(cluster.pixels)
-    return (r,g,b, 1)
+    return (r,g,b, 255)
 #gives you the pattern with the nearest average brightness to your desired brightness (0-1)
 def getMatchingPattern(typeList, bright):
     bright += randrange(-10, 10) / 100
@@ -255,7 +255,7 @@ def getMatchingPattern(typeList, bright):
 
 # he following 6 defs b1v1 , blendvalue, getPatternPixel, Pixelshiftbrightness, pfilter and greenTransparent are unknown in terms of functionality
 # Dev Timo needs to declare their precise functionality in as small of a comment as possible
-#linear mathematics overblending 2 numbers by opacity
+#linear mathematics overblending 2 numbers by opacitymap
 def blVl(o, n, opac):
     return round((o * opac * n + (1-opac) * n))
 def blendValue(old, new, opac=False):
@@ -298,14 +298,15 @@ def greenTransparent(pixel, portel):
     return (pix[0], pix[1], pix[2], 255)
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+def tupleRGBA(rgbaArray):
+    rgbaArray = list(map(lambda x: round(x), rgbaArray))
+    if len(rgbaArray) == 4:
+        return (rgbaArray[0], rgbaArray[1],rgbaArray[2],rgbaArray[3])
+    return (rgbaArray[0], rgbaArray[1], rgbaArray[2], 255)
+
+
 # colors the clusters of given image
 def coloringClusters(pixels, portix, clusters):
-    # loading basic values
-    xwidth = im.size[0]
-    ywidth = im.size[1]
-    minEdgeSize = getminEdgeSize()
-    patsize = min(350, round(minEdgeSize / 15))  # should be an even number
-
     # start timer
     start_time = time.time()
     print("coloring clusters...")
@@ -313,52 +314,21 @@ def coloringClusters(pixels, portix, clusters):
     # coloring clusters
     for clust_counter, clust in enumerate(clusters):
         color = colorForCluster(portix, clust)
-        desiredBrightness = sum(color) / len(color) / 255
-        if clust.typ == "buildings":
-            pattern = getMatchingPattern(["simple"], desiredBrightness)
-        elif clust.typ == "parks":
-            pattern = getMatchingPattern(["nature"], desiredBrightness)
-        else:
-            continue
-        factor = desiredBrightness / pattern["brightness"]
-        maxx = 0
-        maxy = 0
-        minx = xwidth
-        miny = ywidth
         for pix in clust.pixels:
-            if pix[0] > maxx:
-                maxx = pix[0]
-            if pix[0] < minx:
-                minx = pix[0]
-            if pix[1] > maxy:
-                maxy = pix[1]
-            if pix[1] < miny:
-                miny = pix[1]
-        # maxd was defined but never used so seems likea  useless variable, Dev Timo needs to explain
-        # maxd = max(maxx-minx, maxy-miny)
-        xo = randrange(round(patsize / 2))
-        yo = randrange(round(patsize / 2))
-        for pix in clust.pixels:
-            x = pix[0] - minx
-            y = pix[1] - miny
+            if clust.typ == "parks":
+                pixels[pix[0], pix[1]] =  tupleRGBA(colors["parks"])
+            elif clust.typ == "water":
+                pixels[pix[0], pix[1]] =  tupleRGBA(colors["water"])
+            else:
+                pixels[pix[0], pix[1]] = tupleRGBA(color)
 
-            x += xo
-            y += yo
-            x = x % patsize
-            y = y % patsize 
-            try:
-                if clust.typ == "parks":
-                    pixels[pix[0], pix[1]] = getPatternPixel(pattern, x, y, colors["parks"])
-                else:
-                    pixels[pix[0], pix[1]] = pixelShiftBrightness(getPatternPixel(pattern, x, y, color), factor) 
-            except Exception as e:
-                print(x,y)
-                raise e
+
         
         if clust_counter % 1000 == 0:
             print(f'\t{round(clust_counter / len(clusters) * 100)}% done')
 
     print("--- %s seconds ---" % (time.time() - start_time))
+
 # applies filters onto image
 def applyFilter(im, pt, on):
     if on:
@@ -414,9 +384,9 @@ if __name__ == '__main__':
     # coloring of the clusters
     coloringClusters(pixels, portix, clusters)
     # apply filters, if you dont want this just set parameter to False
-    applyFilter(im, pt, True)
+    # applyFilter(im, pt, True)
     # show the patterns that were used
-    showPats()
+    # showPats()
 
     im.save(exportfile)
     print_dimension(im)
