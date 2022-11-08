@@ -36,9 +36,9 @@ def startSession(w, h):
     global driver
     try:
         driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),options=getOptions())
-    except:
-        print("exec driver path")
-        driver = webdriver.Chrome(executable_path="//root/.wdm/drivers/chromedriver/linux64/105.0.5195.52/chromedriver",options=getOptions())
+    except Exception as e:
+        print(e)
+        # driver = webdriver.Chrome(executable_path="//root/.wdm/drivers/chromedriver/linux64/105.0.5195.52/chromedriver",options=getOptions())
     driver.set_window_position(0,0)
     driver.set_window_size(w,h)
     #initializes the user agent
