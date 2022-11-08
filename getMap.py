@@ -48,7 +48,7 @@ def startSession(w, h):
 def screenshot(lat,lng,zm, w,h, filename):
 
      
-    startSession(w, h)
+    driver = startSession(w, h)
     print("selenium session started")
     #searchesthe eans
     url= f'https://framed.timopictur.es/html/map.html?lat={lat}lng={lng}zm={zm}'
