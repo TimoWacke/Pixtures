@@ -10,6 +10,7 @@ import re
 import sys
 import time
 import cv2
+from npindex import npidx
 
 """
     This function is used to load a certain image either from its
@@ -337,15 +338,18 @@ def saturatePixel(pix):
     # new saturation should be 0.5 of original
     avg = (pix[0] + pix[1]+ pix[2]) / 3
     for i in range(3):
-        pix[i] = (pix[i] + avg)*sat
+        pix[i] = (pix[i]*sat + avg*(1-sat))
     return pix
 
 
 # applies filters onto image
 def applyFilter(im, pt, on):
     pix_array = np.array(im)
-    vec_saturate = np.vectorize(saturatePixel)
-    return vec_saturate(pix_array)
+    print(pix_array[npidx[1,1]])
+
+    pix_array = np.apply_along_axis(saturatePixel, npidx[2],pix_array)
+    im = Image.fromarray(pix_array)
+    im.save("saturate.png")
 
 
     # if on:
