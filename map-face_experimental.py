@@ -54,7 +54,7 @@ def getminEdgeSize():
     try:
         minEdgeSize = int(sys.argv[3])
     except:
-        minEdgeSize = 1750
+        minEdgeSize = 750
     return minEdgeSize
 # This function is used to resize the two images together, based on given parameters. 
 def resize_images(im,pt):
@@ -276,7 +276,9 @@ def pfilter(pix):
     for i in range(3):
         pix[i] = round(pix[i] * saturation + (sum(pix) / len(pix)) * (1- saturation))
     return (pix[0], pix[1], pix[2], 255)
-def greenTransparent(pixel, portel):
+def greenTransparent(x,y):
+    pixel = pixels[x,y]
+    portel = portix[x,y]
     portel = pfilter([portel[0], portel[1], portel[2]])
     opacity = 0.15
     if pixelIsColor(pixel, (255, 255, 255), 15):
@@ -332,20 +334,19 @@ def coloringClusters(pixels, portix, clusters):
 # applies filters onto image
 def applyFilter(im, pt, on):
     if on:
-        print("done")
-        pixels = im.load()
-        portix = pt.load()
-        pix_data = np.asarray(im, dtype="int32")
-        print(pix_data.ndim)
-        print(pix_data)
-        # xwidth = im.size[0]
-        # ywidth = im.size[1]
-        # start_time = time.time()              
-        # print("applying filters...")
+        xwidth = im.size[0]
+        ywidth = im.size[1]
+        start_time = time.time()              
+        print("applying filters...")
         # for x in range(xwidth):   
         #     for  y in range(ywidth):     
         #         pixels[x,y] = greenTransparent(pixels[x, y], portix[x, y])
-        # print("--- %s seconds ---" % (time.time() - start_time))
+        pix_array = np.array(im)
+        for x,y in np.ndenumerate(pix_array):
+            print(x,y)
+            pix_array[x,y] = greenTransparent(x,y)
+        im = Image.fromarray(pix_array)
+        print("--- %s seconds ---" % (time.time() - start_time))
     else:
         print("skipping filters...")
 # shows patterns which were used
@@ -384,7 +385,7 @@ if __name__ == '__main__':
     # coloring of the clusters
     coloringClusters(pixels, portix, clusters)
     # apply filters, if you dont want this just set parameter to False
-    # applyFilter(im, pt, True)
+    applyFilter(im, pt, True)
     # show the patterns that were used
     # showPats()
 
