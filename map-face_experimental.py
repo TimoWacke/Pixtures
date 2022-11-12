@@ -331,24 +331,44 @@ def coloringClusters(pixels, portix, clusters):
 
     print("--- %s seconds ---" % (time.time() - start_time))
 
+def saturatePixel(pix):
+    sat = 0.5
+    #pix = (r, g, b, a)
+    # new saturation should be 0.5 of original
+    avg = (pix[0] + pix[1]+ pix[2]) / 3
+    for i in range(3):
+        pix[i] = (pix[i] + avg)*sat
+    return pix
+
+
 # applies filters onto image
 def applyFilter(im, pt, on):
-    if on:
-        xwidth = im.size[0]
-        ywidth = im.size[1]
-        start_time = time.time()              
-        print("applying filters...")
-        # for x in range(xwidth):   
-        #     for  y in range(ywidth):     
-        #         pixels[x,y] = greenTransparent(pixels[x, y], portix[x, y])
-        pix_array = np.array(im)
-        for x,y in np.ndenumerate(pix_array):
-            print(x,y)
-            pix_array[x,y] = greenTransparent(x,y)
-        im = Image.fromarray(pix_array)
-        print("--- %s seconds ---" % (time.time() - start_time))
-    else:
-        print("skipping filters...")
+    pix_array = np.array(im)
+    vec_saturate = np.vectorize(saturatePixel)
+    return vec_saturate(pix_array)
+
+
+    # if on:
+    #     xwidth = im.size[0]
+    #     ywidth = im.size[1]
+    #     start_time = time.time()              
+    #     print("applying filters...")
+    #     # for x in range(xwidth):   
+    #     #     for  y in range(ywidth):     
+    #     #         pixels[x,y] = greenTransparent(pixels[x, y], portix[x, y])
+    #     pix_array = np.array(im)
+    #     for x,y in np.ndenumerate(pix_array):
+    #         print(x,y)
+    #         pix_array[x,y] = greenTransparent(x,y)
+    #     im = Image.fromarray(pix_array)
+    #     print("--- %s seconds ---" % (time.time() - start_time))
+    # else:
+    #     print("skipping filters...")
+
+
+
+
+
 # shows patterns which were used
 def showPats():
     for pat in chosen_count:
