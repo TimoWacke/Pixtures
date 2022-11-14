@@ -55,7 +55,7 @@ def getminEdgeSize():
     try:
         minEdgeSize = int(sys.argv[3])
     except:
-        minEdgeSize = 750
+        minEdgeSize = 2750
     return minEdgeSize
 # This function is used to resize the two images together, based on given parameters. 
 def resize_images(im,pt):
@@ -344,13 +344,14 @@ def saturatePixel(pix):
 
 # applies filters onto image
 def applyFilter(im, pt, on):
+    start_time = time.time()  
     pix_array = np.array(im)
     print(pix_array[npidx[1,1]])
 
     pix_array = np.apply_along_axis(saturatePixel, npidx[2],pix_array)
     im = Image.fromarray(pix_array)
     im.save("saturate.png")
-
+    print("--- %s seconds ---" % (time.time() - start_time))
 
     # if on:
     #     xwidth = im.size[0]
