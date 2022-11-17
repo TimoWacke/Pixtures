@@ -22,21 +22,21 @@ def load_image(typ):
     if (typ == "city"):	
         try:
             # read the image
-            city_im = Image.open(sys.argv[1])
+            city_im = cv2.IMREAD_UNCHANGED(sys.argv[1])
             return city_im
         except:
             # if the image is not found use the standard image
-            city_im = Image.open("img/city-map-src.png")
+            city_im = cv2.IMREAD_UNCHANGED("img/city-map-src.png")
             return city_im
     if (typ == "user"):
         try:
             # read the user portrait
-            user_pt = Image.open("/root/Pixtures/img/" + sys.argv[2])
+            user_pt = cv2.IMREAD_UNCHANGED("/root/Pixtures/img/" + sys.argv[2])
             user_pt =  ImageOps.exif_transpose(user_pt)
             return user_pt
         except:
             # if the user portrait is not found use the standard image
-            user_pt = Image.open("img/portrait-src.png")
+            user_pt = cv2.IMREAD_UNCHANGED("img/portrait-src.png")
             return user_pt
 # This function returns export image path
 def get_export_path():            
