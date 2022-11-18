@@ -1,4 +1,3 @@
-from audioop import avg
 from http.client import NETWORK_AUTHENTICATION_REQUIRED
 from math import *
 from random import randrange
@@ -347,7 +346,7 @@ def applyFilter(im, pt, on):
     start_time = time.time()  
     pix_array = np.array(im)
     print(pix_array[npidx[1,1]])
-
+    
     pix_array = np.apply_along_axis(saturatePixel, npidx[2],pix_array)
     im = Image.fromarray(pix_array)
     im.save("saturate.png")
