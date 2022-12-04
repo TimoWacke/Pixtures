@@ -137,7 +137,7 @@ class Cluster_Process:
         if typ:
             if pixelIsColor(pixels[x, y], colors[typ], 15):
                 foundPixels.append([x, y])
-                clustered[x][y] = True    
+                clustered[x][y] = True
             else:
                 return []
         else:
