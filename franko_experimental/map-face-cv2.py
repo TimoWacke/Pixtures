@@ -33,7 +33,7 @@ def load_image(typ):
     if (typ == "user"):
         try:
             # read the user portrait
-            user_pt = cv2.imread("/root/Pixtures/img/" + sys.argv[2], cv2.IMREAD_UNCHANGED)
+            user_pt = cv2.imread("/pixtures/img/" + sys.argv[2], cv2.IMREAD_UNCHANGED)
             user_pt = cv2.cvtColor(user_pt, cv2.COLOR_BGR2RGB)
             # user_pt =  ImageOps.exif_transpose(user_pt) here we need an alternative
             # alternative for ImageOps.exif_transpose(user_pt) 

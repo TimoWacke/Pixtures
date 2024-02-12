@@ -213,7 +213,7 @@ if __name__ == "__main__":
     for file in patternfilelist:
         try:
             try:
-                pat = Image.open("/root/Pixtures/patterns/" + file)
+                pat = Image.open("/pixtures/patterns/" + file)
             except:
                 path = "patterns/"
                 pat = Image.open(path +  file)
@@ -240,7 +240,7 @@ if __name__ == "__main__":
     except:
         im = Image.open("img/city-map-src.png")
     try:
-        pt = Image.open("/root/Pixtures/img/" + sys.argv[2])
+        pt = Image.open("/pixtures/img/" + sys.argv[2])
         pt =  ImageOps.exif_transpose(pt)
     except:
         pt = Image.open("img/portrait-src.png")

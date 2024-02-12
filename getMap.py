@@ -106,7 +106,7 @@ else:
 print(city)
 
 
-filename = f'/root/Pixtures/img/{lat}_{lng}_{zm}_{width}x{height}-{city}-map.png'
+filename = f'/pixtures/img/{lat}_{lng}_{zm}_{width}x{height}-{city}-map.png'
 
 try:
     if not os.path.exists(filename):
@@ -115,7 +115,7 @@ try:
         print("exists already")
 
 except:
-    filename = filename[len("/root/Pixtures"):]
+    filename = filename[len("/pixtures"):]
     print(screenshot(lat, lng, zm, width, height, filename))
 
 print(filename)

@@ -7,8 +7,8 @@ import cv2
 
 def load_images(): 
     try:
-        pt = Image.open("/root/Pixtures/img/" + sys.argv[1])
-        cv_pt  = cv2.imread("/root/Pixtures/img/" + sys.argv[1])
+        pt = Image.open("/pixtures/img/" + sys.argv[1])
+        cv_pt  = cv2.imread("/pixtures/img/" + sys.argv[1])
         return pt, cv_pt
     except:
         pt = Image.open("img/portrait.png")

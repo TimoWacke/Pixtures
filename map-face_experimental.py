@@ -30,7 +30,7 @@ def load_image(typ):
     if (typ == "user"):
         try:
             # read the user portrait
-            user_pt = Image.open("/root/Pixtures/img/" + sys.argv[2])
+            user_pt = Image.open("/pixtures/img/" + sys.argv[2])
             user_pt =  ImageOps.exif_transpose(user_pt)
             return user_pt
         except:
@@ -195,7 +195,7 @@ def loadPatterns(patternfilelist):
     for file in patternfilelist:
         try:
             try:
-                pat = Image.open("/root/Pixtures/patterns/" + file)
+                pat = Image.open("/pixtures/patterns/" + file)
             except:
                 path = "patterns/"
                 pat = Image.open(path +  file)
