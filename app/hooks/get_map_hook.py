@@ -97,6 +97,8 @@ class GetMapHook:
             self.driver.quit()  # Quit the driver after use
             self.driver = None
 
+            logger.info(f"Screenshot captured for coordinates {lat}, {lng}")
+
             return image, self.get_location_name(lat, lng)
 
         except Exception as e:
