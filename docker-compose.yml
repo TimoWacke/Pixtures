@@ -1,0 +1,61 @@
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}  # Use variables from .env
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}  # Use variables from .env
+    volumes:
+      - mongo_data:/data/db
+    restart: always
+    networks:
+      - pixtures
+  selenium-hub:
+    image: selenium/hub:latest
+    container_name: selenium-hub
+    ports:
+      - 4444:4444
+    volumes:
+      - /dev/shm:/dev/shm   
+    environment:
+      - GRID_MAX_SESSION=16
+      - GRID_BROWSER_TIMEOUT=60
+      - GRID_TIMEOUT=60
+  chrome:
+    image: selenium/node-chrome:latest
+    volumes:
+      - /dev/shm:/dev/shm
+    container_name: chrome
+    depends_on:
+      - selenium-hub
+    environment:
+      - HUB_HOST=selenium-hub
+      - HUB_PORT=4444
+      - SE_EVENT_BUS_HOST=selenium-hub 
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+  pixtures:
+    image: python:3.12
+    container_name: pixtures
+    volumes:
+      - ./app:/app
+      - ./requirements.txt:/requirements.txt  # Mount requirements.txt
+    environment:
+      PRINTFUL_BEARER: ${PRINTFUL_BEARER}  # Use variables from .env
+      MONGO_USERNAME: ${MONGO_USERNAME}  # Use variables from .env
+      MONGO_PASSWORD: ${MONGO_PASSWORD}  # Use variables from .env
+      MONGO_HOST: ${MONGO_HOST}  # Use variables from .env
+    # start uvicorn server
+    command: bash -c "pip install -r requirements.txt && uvicorn app.main:app --host ${HOST} --port ${APP_PORT} --forwarded-allow-ips='*'"
+    ports:
+      - "${APP_PORT}:${APP_PORT}"
+    depends_on:
+      - mongodb
+    networks:
+      - pixtures
+
+volumes:
+  mongo_data:
+networks:
+  pixtures:
+    driver: bridge
