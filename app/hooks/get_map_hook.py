@@ -38,8 +38,7 @@ class GetMapHook:
                     command_executor=settings.SELENIUM_URL,
                     options=self.get_options()
                 )
-                self.driver.set_page_load_timeout(10)  # Limit page load to 10 seconds
-                self.driver.set_script_timeout(5)      # Limit script execution to 5 seconds
+                self.driver.set_page_load_timeout(20)  # Limit page load to 10 seconds
                 self.driver.set_window_position(0, 0)
                 # self.driver.set_window_size(3840, 2160)
                 self.driver.execute_script("return navigator.userAgent")
@@ -83,30 +82,23 @@ class GetMapHook:
                 time.sleep(random.uniform(1, 3))  # Random delay between retries
 
     def screenshot(self, lat, lng, zm, w, h):
-        try:
-            # Start/reuse the driver session
-            self.start_session()
-            self.driver.set_window_size(w, h)
+        # Start/reuse the driver session
+        self.start_session()
+        self.driver.set_window_size(w, h)
 
-            # Construct the map URL
-            url = f'{settings.MAP_URL}?lat={lat}&lng={lng}&zm={zm}'
-            self.driver.get(url)
-            time.sleep(3)  # Give the page time to load
+        # Construct the map URL
+        url = f'{settings.MAP_URL}?lat={lat}&lng={lng}&zm={zm}'
+        url = "https://airbnb.com"
+        self.driver.get(url)
+        time.sleep(3)  # Give the page time to load
 
-            # Capture screenshot as bytes and convert it to a Pillow image
-            screenshot_bytes = self.driver.get_screenshot_as_png()
-            image = Image.open(BytesIO(screenshot_bytes))  # Convert to Pillow
+        # Capture screenshot as bytes and convert it to a Pillow image
+        screenshot_bytes = self.driver.get_screenshot_as_png()
+        image = Image.open(BytesIO(screenshot_bytes))  # Convert to Pillow
 
-            self.driver.quit()  # Quit the driver after use
-            self.driver = None
+        self.driver.quit()  # Quit the driver after use
+        self.driver = None
 
-            logger.info(f"Screenshot captured for coordinates {lat}, {lng}")
+        logger.info(f"Screenshot captured for coordinates {lat}, {lng}")
 
-            return image, self.get_location_name(lat, lng)
-
-        except Exception as e:
-            logger.error(f"Error during screenshot capture: {e}")
-            if self.driver:
-                self.driver.quit()  # Quit the driver if an error occurs
-            self.driver = None
-            raise Exception(f"Error capturing screenshot for coordinates {lat}, {lng}")
+        return image, self.get_location_name(lat, lng)
