@@ -29,7 +29,7 @@ class Settings(BaseSettings):
     MONGO_PORT: str = "27017"
     MONGO_DATABASE: str = "pixtures"
 
-    SELENIUM_URL: str = "http://selenium:4444/wd/hub"
+    SELENIUM_URL: str = "http://selenium-hub:4444/wd/hub"
     MAP_URL: str = "https://framed.sea.hamburg/html/map.html"
 
     @property
