@@ -47,6 +47,8 @@ services:
       MONGO_USERNAME: ${MONGO_USERNAME}  # Use variables from .env
       MONGO_PASSWORD: ${MONGO_PASSWORD}  # Use variables from .env
       MONGO_HOST: ${MONGO_HOST}  # Use variables from .env
+      APP_PORT: ${APP_PORT}  # Use variables from .env
+      HOST: ${HOST}  # Use variables from .env
     # start uvicorn server
     command: bash -c "pip install -r requirements.txt && uvicorn app.main:app --host ${HOST} --port ${APP_PORT} --forwarded-allow-ips='*'"
     ports:

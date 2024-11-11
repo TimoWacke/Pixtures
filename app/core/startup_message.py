@@ -15,7 +15,7 @@ def create_startup_message() -> None:
     # Create the main title
     title = Text()
     title.append("🌇 ", style="bright_yellow")
-    title.append(f"{settings.PROJECT_NAME}", style="bold bright_blue")
+    title.append(f" {settings.PROJECT_NAME}", style="bold bright_blue")
     title.append(" is ready to roll!", style="bright_green")
 
     # Create main table
@@ -42,7 +42,7 @@ def create_startup_message() -> None:
 
     table.add_row("Platform", platform.platform())
     table.add_row("Python Version", platform.python_version())
-    table.add_row("Listening on", settings.APP_PORT)
+    table.add_row("Listening on", settings.HOST + ":" + settings.APP_PORT)
 
     panel = Panel(
         table,
