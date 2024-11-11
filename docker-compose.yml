@@ -19,6 +19,8 @@ services:
       - GRID_MAX_SESSION=16
       - GRID_BROWSER_TIMEOUT=60
       - GRID_TIMEOUT=60
+    ports:
+      - "4444:4444"
     networks:
       - pixtures
   chrome:
