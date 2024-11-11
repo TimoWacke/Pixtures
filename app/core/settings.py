@@ -30,7 +30,10 @@ class Settings(BaseSettings):
     MONGO_DATABASE: str = "pixtures"
 
     SELENIUM_URL: str = "http://selenium-hub:4444/wd/hub"
-    MAP_URL: str = "https://framed.sea.hamburg/html/map.html"
+
+    @property
+    def MAP_URL(self) -> str:
+        return f"http://pixtures:{self.APP_PORT}/static/map.html"
 
     @property
     def MONGO_URI(self) -> str:

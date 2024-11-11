@@ -32,14 +32,17 @@ class GetMapHook:
 
     def start_session(self):
         try:
-            logger.info("Starting new browser session.")
-            self.driver = webdriver.Remote(
-                command_executor=settings.SELENIUM_URL,
-                options=self.get_options()
-            )
-            self.driver.set_window_position(0, 0)
-            # self.driver.set_window_size(3840, 2160)
-            self.driver.execute_script("return navigator.userAgent")
+            if not self.driver:
+                logger.info("Starting new browser session.")
+                self.driver = webdriver.Remote(
+                    command_executor=settings.SELENIUM_URL,
+                    options=self.get_options()
+                )
+                self.driver.set_page_load_timeout(10)  # Limit page load to 10 seconds
+                self.driver.set_script_timeout(5)      # Limit script execution to 5 seconds
+                self.driver.set_window_position(0, 0)
+                # self.driver.set_window_size(3840, 2160)
+                self.driver.execute_script("return navigator.userAgent")
         except Exception as e:
             logger.error(f"Error starting session: {e}")
             self.driver = None

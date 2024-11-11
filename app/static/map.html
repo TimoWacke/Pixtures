@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script>
+
+
+        function initMap() {
+            console.log(window.location.href)
+            let vlat = parseFloat(window.location.href.match(/lat=(\-?[\d\.]+)/)[1])
+            let vlng = parseFloat(window.location.href.match(/lng=(\-?[\d\.]+)/)[1])
+            let vzoom = parseFloat(window.location.href.match(/zm=([\d\.]+)/)[1])
+            const map = new google.maps.Map(document.getElementById("map"), {
+                mapId: "6b1f31442f4ffc3b",
+                center: { lat: vlat, lng: vlng },
+                zoom: vzoom,
+                zoomControl: false,
+                mapTypeControl: false,
+                scaleControl: false,
+                streetViewControl: false,
+                rotateControl: false,
+                fullscreenControl: false
+            });
+
+        }
+
+        window.initMap = initMap;
+    </script>
+
+</head>
+
+<body>
+    <div id="map" class="card"></div>
+
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBWAWOLCKqRM9kuvOueScx8F0Uzw5tMjrM&callback=initMap&libraries=places&v=weekly"
+        defer></script>
+</body>
+
+
+<style>
+    #map {
+        width: 100vw;
+        height: 100vh;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+</style>
+
+</html>

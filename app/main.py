@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import logging
@@ -62,6 +63,9 @@ def create_app() -> FastAPI:
     except Exception as e:
         logging.error(f"Error registering routes: {e}")
         raise e
+
+    # Serve static files
+    app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
     return app
 
