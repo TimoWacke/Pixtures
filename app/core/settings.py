@@ -31,9 +31,7 @@ class Settings(BaseSettings):
 
     SELENIUM_URL: str = "http://selenium-hub:4444/wd/hub"
 
-    @property
-    def MAP_URL(self) -> str:
-        return f"http://pixtures:{self.APP_PORT}/static/map.html"
+    MAP_URL: str = "http://pixtures:6969/static/map.html"
 
     @property
     def MONGO_URI(self) -> str:
