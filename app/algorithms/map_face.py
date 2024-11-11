@@ -4,6 +4,10 @@ from PIL import Image
 
 import re
 import time
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 
 # linear mathematics overblending 2 numbers by opacity
@@ -76,6 +80,8 @@ class MapFace():
 
     def __init__(self):
 
+        self.logger = logging.getLogger(__name__)
+
         self.patterns, self.patternfilelist = [], []
         self.chosen_count = {}
 
@@ -120,7 +126,7 @@ class MapFace():
                 self.patterns.append({"brightness": h, "pixels": paxels, "type": re.findall(
                     r'(\S+)\d+\.png', file)[0], "name": file})
             except Exception:
-                print("without pattern:", file)
+                self.logger.info("without pattern:", file)
 
     # gives you the pattern with the nearest average brightness to your desired brightness (0-1)
     def getMatchingPattern(self, typeList, bright):
@@ -169,10 +175,10 @@ class MapFace():
         curr = []
         clustered = np.zeros(shape=(xwidth, ywidth))
 
-        print("--- %s seconds ---" % (time.time() - start_time))
-        # print(patterns)
+        self.logger.info("--- %s seconds ---" % (time.time() - start_time))
+        # self.logger.info(patterns)
         start_time = time.time()
-        print("finding clusters...")
+        self.logger.info("finding clusters...")
 
         def colorForCluster(cluster):
             r, g, b = 0, 0, 0
@@ -182,7 +188,7 @@ class MapFace():
                     g += portix[pix[0], pix[1]][1]
                     b += portix[pix[0], pix[1]][2]
                 except Exception:
-                    print("err:", pix[0], pix[1])
+                    self.logger.info("err:", pix[0], pix[1])
             r /= len(cluster["pixels"])
             g /= len(cluster["pixels"])
             b /= len(cluster["pixels"])
@@ -247,20 +253,20 @@ class MapFace():
                         clusters.append(curr)
                         count_clustered_pixel += len(curr["pixels"])
                         if (len(clusters) % 1000 == 0):
-                            print(f'\tat {round(100*(x*ywidth + y) / (xwidth * ywidth))}%'
-                                  f'found {len(clusters)} clusters '
-                                  f'{round(100*count_checked / count_clustered_pixel)/100} c/px')
+                            self.logger.info(f'\tat {round(100*(x*ywidth + y) / (xwidth * ywidth))}%'
+                                             f'found {len(clusters)} clusters '
+                                             f'{round(100*count_checked / count_clustered_pixel)/100} c/px')
                 y += 2
             x += 2
 
-        print(f'\t{count_clustered_pixel} pixels clustered')
-        print(f'\ton avg {round(count_clustered_pixel / len(clusters))} px per cluster')
-        print("--- %s seconds ---" % (time.time() - start_time))
+        self.logger.info(f'\t{count_clustered_pixel} pixels clustered')
+        self.logger.info(f'\ton avg {round(count_clustered_pixel / len(clusters))} px per cluster')
+        self.logger.info("--- %s seconds ---" % (time.time() - start_time))
 
         # till here is finished and working, after this is still todo
 
         start_time = time.time()
-        print("coloring clusters...")
+        self.logger.info("coloring clusters...")
         clust_counter = 0
         for clust in clusters:
             color = colorForCluster(clust)
@@ -302,27 +308,27 @@ class MapFace():
                     else:
                         pixels[pix[0], pix[1]] = pixelShiftBrightness(getPatternPixel(pattern, x, y, color), factor)
                 except Exception as e:
-                    print(x, y)
+                    self.logger.info(x, y)
                     raise e
 
             clust_counter += 1
             if clust_counter % 1000 == 0:
-                print(f'\t{round(clust_counter / len(clusters) * 100)}% done')
+                self.logger.info(f'\t{round(clust_counter / len(clusters) * 100)}% done')
 
-        print("--- %s seconds ---" % (time.time() - start_time))
+        self.logger.info("--- %s seconds ---" % (time.time() - start_time))
 
         start_time = time.time()
         if self.do_filter:
-            print("applying filters...")
+            self.logger.info("applying filters...")
             for x in range(xwidth):
                 for y in range(ywidth):
                     pixels[x, y] = self.greenTransparent(pixels[x, y], portix[x, y])
-            print("--- %s seconds ---" % (time.time() - start_time))
+            self.logger.info("--- %s seconds ---" % (time.time() - start_time))
 
-        print("saving...")
+        self.logger.info("saving...")
         for pat in self.chosen_count:
             if self.chosen_count[pat] > 0:
-                print(f'\t {pat}: {self.chosen_count[pat]}')
+                self.logger.info(f'\t {pat}: {self.chosen_count[pat]}')
 
         return im
 
