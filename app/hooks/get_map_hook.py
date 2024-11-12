@@ -38,7 +38,7 @@ class GetMapHook:
                     command_executor=settings.SELENIUM_URL,
                     options=self.get_options()
                 )
-                self.driver.set_page_load_timeout(20)  # Limit page load to 10 seconds
+                self.driver.set_page_load_timeout(10)  # Limit page load to 10 seconds
                 self.driver.set_window_position(0, 0)
                 # self.driver.set_window_size(3840, 2160)
                 self.driver.execute_script("return navigator.userAgent")

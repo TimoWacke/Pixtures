@@ -40,6 +40,7 @@ services:
       - "5555:5555"
     networks:
       - pixtures
+      - web
   pixtures:
     image: python:3.12
     container_name: pixtures
@@ -67,3 +68,6 @@ volumes:
 networks:
   pixtures:
     driver: bridge
+  web:
+    external: true
+      
