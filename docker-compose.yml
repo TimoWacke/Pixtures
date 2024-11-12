@@ -67,4 +67,6 @@ volumes:
 networks:
   pixtures:
     driver: bridge
+    external: true
+      
       
