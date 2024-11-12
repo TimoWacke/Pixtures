@@ -66,5 +66,6 @@ volumes:
   mongo_data:
 networks:
   pixtures:
+    name: pixtures
     driver: bridge
     attachable: true
