@@ -65,7 +65,7 @@ def create_app() -> FastAPI:
         raise e
 
     # Serve static files
-    app.mount("/static", StaticFiles(directory="app/static"), name="static")
+    app.mount("/static", StaticFiles(directory="/app/static"), name="static")
 
     return app
 
