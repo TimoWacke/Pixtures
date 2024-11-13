@@ -1,4 +1,26 @@
 services:
+  pixtures:
+    image: python:3.12
+    container_name: pixtures
+    volumes:
+      - ./app:/app
+      - ./requirements.txt:/requirements.txt  # Mount requirements.txt
+      - ./patterns:/patterns
+    environment:
+      PRINTFUL_BEARER: ${PRINTFUL_BEARER}  # Use variables from .env
+      MONGO_USERNAME: ${MONGO_USERNAME}  # Use variables from .env
+      MONGO_PASSWORD: ${MONGO_PASSWORD}  # Use variables from .env
+      MONGO_HOST: ${MONGO_HOST}  # Use variables from .env
+      APP_PORT: ${APP_PORT}  # Use variables from .env
+      HOST: ${HOST}  # Use variables from .env
+    # start uvicorn server
+    command: bash -c "pip install -r requirements.txt && uvicorn app.main:app --host ${HOST} --port ${APP_PORT} --forwarded-allow-ips='*'"
+    ports:
+      - "${APP_PORT}:${APP_PORT}"
+    depends_on:
+      - mongodb
+    networks:
+      - pixtures
   mongodb:
     image: mongo:latest
     container_name: mongodb
@@ -38,27 +60,6 @@ services:
       - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
     ports:
       - "5555:5555"
-    networks:
-      - pixtures
-  pixtures:
-    image: python:3.12
-    container_name: pixtures
-    volumes:
-      - ./app:/app
-      - ./requirements.txt:/requirements.txt  # Mount requirements.txt
-    environment:
-      PRINTFUL_BEARER: ${PRINTFUL_BEARER}  # Use variables from .env
-      MONGO_USERNAME: ${MONGO_USERNAME}  # Use variables from .env
-      MONGO_PASSWORD: ${MONGO_PASSWORD}  # Use variables from .env
-      MONGO_HOST: ${MONGO_HOST}  # Use variables from .env
-      APP_PORT: ${APP_PORT}  # Use variables from .env
-      HOST: ${HOST}  # Use variables from .env
-    # start uvicorn server
-    command: bash -c "pip install -r requirements.txt && uvicorn app.main:app --host ${HOST} --port ${APP_PORT} --forwarded-allow-ips='*'"
-    ports:
-      - "${APP_PORT}:${APP_PORT}"
-    depends_on:
-      - mongodb
     networks:
       - pixtures
 
