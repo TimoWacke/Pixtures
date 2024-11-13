@@ -88,7 +88,7 @@ class GetMapHook:
 
         # Construct the map URL
         url = f'{settings.MAP_URL}?lat={lat}&lng={lng}&zm={zm}'
-        url = "https://airbnb.com"
+        # url = "https://airbnb.com"
         self.driver.get(url)
         time.sleep(3)  # Give the page time to load
 
