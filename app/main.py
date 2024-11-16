@@ -41,7 +41,7 @@ def create_app() -> FastAPI:
         # redcos_url=None if settings.ENVIRONMENT != "local" else "/redoc",
     )
 
-    if settings.FRONTEND_DOMAIN:
+    if settings.FRONTEND_DOMAINS:
         try:
             app.add_middleware(
                 CORSMiddleware,
