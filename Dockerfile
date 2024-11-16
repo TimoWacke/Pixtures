@@ -1,7 +1,7 @@
 FROM python:3.12
 
 # Set the working directory in the container
-WORKDIR /app
+WORKDIR /
 
 # Copy the application code into the container
 COPY ./app /app
