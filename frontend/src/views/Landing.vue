@@ -2,6 +2,7 @@
   <div>
     <img v-for="url in imageUrls" :src="url" />
   </div>
+  <button href="/create">Try it yourself</button>
 </template>
 
 <style>
