@@ -15,4 +15,4 @@ RUN pip install --no-cache-dir -r /requirements.txt
 EXPOSE ${APP_PORT}
 
 # Command to run the FastAPI application
-CMD ["sh", "-c", "uvicorn app.main:app --host ${HOST} --port ${APP_PORT} --forwarded-allow-ips='*'"]
+CMD ["sh", "-c", "uvicorn app.main:app --host ${HOST} --port ${APP_PORT} --forwarded-allow-ips='*' --workers 2"]
