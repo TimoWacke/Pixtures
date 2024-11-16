@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 722.63 721">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #3fa9f5;
+      }
+      .cls-2{
+        fill:#fff;
+      }
+@media (prefers-color-scheme: dark) {
+      .cls-1 {
+        fill:#fff;
+      }
+      .cls-2{
+        fill: #3fa9f5;
+      }
+}</style>
+  </defs>
+  <g id="Layer_2" data-name="Layer 2">
+    <g id="Layer_1-2" data-name="Layer 1">
+      <rect class="cls-1" width="722.63" height="721" rx="126.86" />
+      <path class="cls-2" d="M348,254.49V559.33H232.65V254.49H126.07v-94l351.07.12.7,93.82Z" />
+      <path class="cls-2" d="M474.91,559.33V160.47H589.73V559.33Z" />
+    </g>
+  </g>
+</svg>
