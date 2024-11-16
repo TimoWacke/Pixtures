@@ -2,18 +2,18 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 import Map from '@/views/Map'
-import Landing from '@/views/Landing.vue'
+import Landing from '@/views/Landing'
 
 
 let baseRoutes = [
   {
     path: '/',
-    name: 'Pixtures',
+    name: 'Landing-Site',
     component: Landing
   },
   {
     path: '/create',
-    name: 'Pixtures',
+    name: 'Map-Site',
     component: Map
   }
 ]
@@ -27,9 +27,8 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   to
   from
-  next()
-  // nothing yet
-  }
+  return next()
+}
 )
 
 export default router

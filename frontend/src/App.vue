@@ -160,9 +160,7 @@ $secondary: #ff049b;
   align-items: center;
 }
 
-#content,
-#iframe,
-.sign-page {
+#app {
   font-family: "Nunito", "Roboto";
   color: $primary;
 }

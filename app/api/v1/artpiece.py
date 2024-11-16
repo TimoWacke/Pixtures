@@ -35,7 +35,7 @@ async def generate_map(
         media_type=f"image/{image_extension}")
 
 
-@router.get("/list")
+@router.get("/")
 async def list_art_pieces():
     collection = BaseCollection(
         collection_name=art_pieces_collection,
