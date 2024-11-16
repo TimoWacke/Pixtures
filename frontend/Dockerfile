@@ -7,5 +7,5 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-EXPOSE 8080
+EXPOSE 7000
 CMD ["npx", "serve", "-s", "dist", "-l", "7000"]
