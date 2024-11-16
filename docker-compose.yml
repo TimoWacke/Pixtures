@@ -18,6 +18,16 @@ services:
       - mongodb
     networks:
       - pixtures
+  frontend:
+    image: pixtures-frontend:latest
+    container_name: pixtures-frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "7000:7000"
+    networks:
+      - pixtures
   mongodb:
     image: mongo:latest
     container_name: mongodb
