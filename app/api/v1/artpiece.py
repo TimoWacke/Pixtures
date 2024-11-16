@@ -44,4 +44,4 @@ async def list_art_pieces():
 
     art_pieces = collection.list()
     # return all preview urls
-    return [f"{settings.SELF_DOMAIN}/api/v1/artpiece/{str(art_piece._id)}" for art_piece in art_pieces]
+    return [f"{settings.SELF_DOMAIN}/api/v1/artpiece/{str(art_piece.id)}" for art_piece in art_pieces]

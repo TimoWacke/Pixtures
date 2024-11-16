@@ -183,7 +183,7 @@ class BaseCollection(Generic[T]):
     @handle_mongo_errors
     def list(
         self, filter_dict: dict = None, skip: int = 0, limit: int = 50, sort_field: str = None, sort_order: int = 1
-    ) -> Tuple[List[T], int]:
+    ) -> List[T]:
         """List documents with pagination"""
         self.logger.info("Listing documents")
         self.logger.debug(f"Filter: {filter_dict}, Skip: {skip}, Limit: {limit}, Sort: {sort_field}")
@@ -202,7 +202,7 @@ class BaseCollection(Generic[T]):
         documents = [self.model_class(**doc) for doc in cursor]
 
         self.logger.info(f"Found {len(documents)} documents (total: {total})")
-        return documents, total
+        return documents
 
     @handle_mongo_errors
     def bulk_create(self, models: List[T]) -> List[T]:
