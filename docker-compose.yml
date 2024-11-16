@@ -40,8 +40,6 @@ services:
       - GRID_TIMEOUT=60
     networks:
       - pixtures
-    ports:
-      - "4444:4444"
   chrome:
     image: selenium/node-chrome:latest
     volumes:
@@ -57,8 +55,6 @@ services:
       - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
     networks:
       - pixtures
-    ports:
-      - "5555:5555"
 
 volumes:
   mongo_data:

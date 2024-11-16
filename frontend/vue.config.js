@@ -6,7 +6,7 @@ module.exports = defineConfig({
     iconPaths: {
         favicon32: 'public/favicon.ico',
     },
-    name: "Loyalty",
+    name: "CityCanvas",
     themeColor: "#0f476f"
 }
 })

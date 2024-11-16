@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Path
 from fastapi.responses import Response
 from bson import ObjectId
+from app.core.settings import settings
 import base64
 from app.db.base_collection import BaseCollection
 from app.db.models.art_pieces_model import (
@@ -32,3 +33,15 @@ async def generate_map(
     return Response(
         content=base64.b64decode(image_base64_encoded),
         media_type=f"image/{image_extension}")
+
+
+@router.get("/list")
+async def list_art_pieces():
+    collection = BaseCollection(
+        collection_name=art_pieces_collection,
+        model_class=ArtPiecesModel
+    )
+
+    art_pieces = collection.get_all()
+    # return all preview urls
+    return [f"{settings.SELF_DOMAIN}/api/v1/artpiece/{str(art_piece._id)}" for art_piece in art_pieces]

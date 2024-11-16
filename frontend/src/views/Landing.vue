@@ -1,86 +1,6 @@
 <template>
-  <div id="iframe" class="container wide">
-    <div class="hori spce wrapflow">
-      <div class="column">
-        <h1>Create your custom design</h1>
-        <br />
-        <p id="error">{{ errormsg }}</p>
-        <input id="file" class="custom-file-input" type="file" accept="image/*" v-on:change="onFileChange" />
-        <br />
-        <label for="">Jump to city:</label>
-        <br />
-        <div class="cityQuicklinks">
-          <div v-for="city in suggestedCities" :key="city" class="cityBtn">
-            <a @click="moveTo(city)"> {{ city.name }}</a>
-          </div>
-        </div>
-      </div>
-      <div>
-        <h4 class="label">level of detail</h4>
-        <input id="rs-range-line" class="rs-range" type="range" min="1" max="4" step="0.01" v-model="scale"
-          @input="reloadScale" />
-        <div id="background" red="bg">
-          <GMap id="gmap" :key="coordinates.lat" :coordinates="coordinates" />
-        </div>
-        <button id="preview-btn" class="submit-btn" :disabled="!uploadDone || !file" @click="getPreview" :data-item-id="imageId +
-          '_lat' +
-          coordinates.lat +
-          '_lng' +
-          coordinates.lng +
-          '_zm' +
-          coordinates.zm +
-          '_scale' +
-          scale +
-          '_ratio' +
-          24 / 18
-          ">
-          {{
-            !uploadDone || !file
-              ? "Uploading your image"
-              : "Submit for a free preview"
-          }}
-        </button>
-      </div>
-    </div>
-    <div id="cnWrapper" class="hori">
-      <span class="cityname special" id="cnbefore">{{
-        this.previewLocation
-        }}</span>
-      <span class="cityname">
-        {{ this.previewLocation }}
-      </span>
-      <span class="cityname special" id="cnafter">{{
-        this.previewLocation
-        }}</span>
-    </div>
-    <div id="mockupContainer">
-      <img v-for="mockup in mockupUrls" :key="mockup" :src="mockup" />
-      <img v-if="previewUrl" :src="previewUrl" />
-      <div v-if="!uploadDone || !mockUpDone" id="loadingwrapper">
-        <div id="loadingbox">
-          <div id="before"><br /></div>
-          <div id="after">
-            {{ status }}
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- <button v-if="identifier" class="submit-btn snipcart-add-item" :data-item-id="identifier"
-      :data-item-url="'/pictures-map?' + identifier" :data-item-price="120.0" :data-item-image="mockupUrls[0]"
-      :data-item-name="previewLocation">
-      add to cart
-    </button>
-    <a class="snipcart-checkout">
-      <svg height="1em" width="1em" focusable="false" fill="currentColor" viewBox="0 0 24 24"
-        aria-labelledby="your-bag-12731763" role="img" aria-hidden="false">
-        <title>Your shopping cart</title>
-        <path
-          d="M21.193 8.712a2.984 2.984 0 0 0-2.986-2.726h-.952v-.751a5.255 5.255 0 0 0-10.51 0v.75h-.951a2.983 2.983 0 0 0-2.986 2.727L1.715 20.73A2.999 2.999 0 0 0 4.7 24h.005l14.599-.027a2.998 2.998 0 0 0 2.98-3.27L21.193 8.712zM8.246 5.235a3.754 3.754 0 0 1 7.508 0v.75H8.246v-.75zm11.056 17.238-14.599.025h-.002a1.496 1.496 0 0 1-1.49-1.631l1.093-12.02a1.488 1.488 0 0 1 1.49-1.36h.95V9.74a.75.75 0 0 0 1.502 0V7.487h7.508V9.74c0 .415.336.75.75.75h.002a.75.75 0 0 0 .75-.75V7.487h.951a1.49 1.49 0 0 1 1.49 1.361l1.092 11.993a1.496 1.496 0 0 1-1.488 1.632z">
-        </path>
-      </svg>
-    </a>
-    <span class="snipcart-items-count"></span>
-    <span class="snipcart-total-price"></span> -->
+  <div>
+    <img v-for="url in imageUrls" :src="url" />
   </div>
 </template>
 
@@ -90,81 +10,22 @@
 
 <script>
 import axios from "axios";
-import VueCookie from "vue-cookies";
 import vars from "../assets/vars";
-import GMap from "../components/myMap.vue";
 
 export default {
-  name: "Map-Site",
+  name: "Landing",
   data() {
     return {
-      status: "",
-      scale: 2.5,
-      identifier: false,
-      uploadDone: true,
-      mockUpDone: true,
-      file: false,
-      coordinates: { lat: 53.55, lng: 10, zm: 12 },
-      imageId: "",
-      shopifyToken: ((Date.now() % (4 * 366 * 24 * 60 * 60 * 1000)) * 7)
-        .toString(36)
-        .toUpperCase(),
-      mockupUrls: [],
-      uploadPercentage: 0,
-      errormsg: "",
-      previewLocation: "",
-      previewUrl: "",
-      suggestedCities: [
-        { name: "Amsterdam", lat: 52.365, lng: 4.88, zm: 14.9 },
-        { name: "London", lat: 51.5, lng: -0.09, zm: 13.8 },
-        { name: "Paris", lat: 48.8566, lng: 2.33, zm: 14.8 },
-        { name: "Stockholm", lat: 59.335, lng: 18.0686, zm: 14.3 },
-        { name: "Cape Town", lat: -34, lng: 18.48, zm: 14 },
-        { name: "Rio d Janeiro", lat: -22.93, lng: -43.2, zm: 14.4 },
-        { name: "Tokyo", lat: 35.7, lng: 139.8, zm: 12 },
-        { name: "Bejing", lat: 39.9, lng: 116.4, zm: 13 },
-        { name: "Shanghai", lat: 31.1, lng: 121.55, zm: 11.75 },
-        { name: "Guangzhou", lat: 22.8, lng: 113.3, zm: 11.4 },
-        { name: "Hong Kong", lat: 22.31, lng: 114.17, zm: 14.9 },
-        { name: "New York", lat: 40.733, lng: -73.99, zm: 14.6 },
-        { name: "Los Angeles", lat: 33.93, lng: -118.2, zm: 12.3 },
-        { name: "Chicago", lat: 41.8781, lng: -87.67, zm: 14.6 },
-      ],
-      userId: null
-    };
+      imageUrls: []
+    }
   },
   mounted() {
-    // identifier format:
     try {
-      // check if user id is in cookie
-      if (VueCookie.get("userId")) {
-        this.userId = VueCookie.get("userId");
-        console.log("found userId in cookie:", this.userId);
-      } else {
-        console.log("no userId in cookie");
-        // random 24 letter hex string
-        let objectId = Math.floor(Math.random() * 16 ** 24).toString(16);
-        this.userId = objectId;
-        // save to cookie
-        VueCookie.set("userId", objectId);
-      }
-      var me = this;
-      
-      this.identifier = window.location["href"].match(/\?(\S+)/)[1];
-      console.log(window.location);
+      me = this;
       axios
-        .get(vars.pixtures + "/printful/identifier/" + this.identifier)
+        .get(vars.pixtures + "/artpiece/list")
         .then((response) => {
-          me.previewUrl = response.data.previewUrl;
-          me.previewLocation = response.data.region;
-          me.coordinates.lat = response.data.lat;
-          me.coordinates.lng = response.data.lng;
-          me.coordinates.zm = response.data.zm;
-          me.scale =
-            response.data.width /
-            document.getElementById("background").offsetWidth;
-          me.status = "Loading Mockups";
-          me.getMockUps();
+          me.imageUrls = response.data;
         });
     } catch {
       this.coordinates = this.suggestedCities[0];
