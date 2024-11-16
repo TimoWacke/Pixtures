@@ -2,7 +2,7 @@ from selenium import webdriver
 from PIL import Image
 from io import BytesIO
 import time
-from geopy.geocoders import Nominatim
+import reverse_geocoder as rg
 import logging
 import random
 
@@ -21,7 +21,6 @@ class GetMapHook:
         if not cls._instance:
             cls._instance = super().__new__(cls)
             cls._instance.driver = None
-            cls._instance.geolocator = Nominatim(user_agent="geoapiExercises")
         return cls._instance
 
     def get_options(self):
@@ -48,24 +47,8 @@ class GetMapHook:
 
     def get_location_name(self, lat, lng):
         try:
-            location = self.geolocator.reverse(f'{lat}, {lng}')
-            address = location[0].split(", ")
-            state = address[len(address)-3]
-            county = address[len(address)-4]
-            city = []
-
-            # Extract city name from matching state and county
-            for word in state.split(" "):
-                for w in county.split(" "):
-                    if word == w:
-                        city.append(w)
-
-            if len(city) == 0:
-                city = county + "-" + state
-            else:
-                city = " ".join(city)
-
-            return city
+            location = rg.search((lat, lng))
+            return location[0]['name']
         except Exception as e:
             e
             # logger.error(f"Error retrieving location: {e}")
