@@ -45,7 +45,8 @@ def create_app() -> FastAPI:
         try:
             app.add_middleware(
                 CORSMiddleware,
-                allow_origins=[settings.FRONTEND_DOMAIN],
+                allow_origins=[settings.FRONTEND_DOMAIN,
+                               "http://localhost:8080"],
                 allow_credentials=True,
                 allow_methods=["*"],
                 allow_headers=["*"],

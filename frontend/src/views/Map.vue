@@ -231,7 +231,7 @@ export default {
       var formData = new FormData();
       formData.append("shopifyToken", this.shopifyToken);
       formData.append("file", document.getElementById("file").files[0]);
-      formData.append("userId", App.store["user"]._id);
+      formData.append("userId", this.shopifyToken);
       var me = this;
       axios
         .post(vars.pixtures + "/api/v1/portrait", formData, {
