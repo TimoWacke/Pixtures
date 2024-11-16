@@ -20,7 +20,7 @@ class Settings(BaseSettings):
 
     FRONTEND_DOMAINS: Optional[list[str]] = [
         "https://loyalty.sea.hamburg",
-        "https://frontend.sea.hamburg",
+        "https://sea.hamburg",
         "http://localhost:8080"
     ]
     SELF_DOMAIN: str = "https://pixtures.sea.hamburg"
