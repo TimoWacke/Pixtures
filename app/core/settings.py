@@ -18,7 +18,11 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
     ENVIRONMENT: EnvironmentType = EnvironmentType.PROD
 
-    FRONTEND_DOMAIN: Optional[str] = "https://loyalty.sea.hamburg"
+    FRONTEND_DOMAINS: Optional[list[str]] = [
+        "https://loyalty.sea.hamburg",
+        "https://frontend.sea.hamburg",
+        "http://localhost:8080"
+    ]
     SELF_DOMAIN: str = "https://pixtures.sea.hamburg"
 
     PRINTFUL_BEARER: str
