@@ -1,6 +1,5 @@
 from selenium.webdriver.chrome.service import Service
 from selenium import webdriver
-import reverse_geocoder as rg
 from io import BytesIO
 from PIL import Image
 import random
@@ -113,26 +112,8 @@ class GetMapHook:
             self.driver = None
             raise
 
-    def get_location_name(self, lat: float, lng: float) -> str:
-        """
-        Get the location name for given coordinates using reverse geocoding.
-
-        Args:
-            lat (float): Latitude of the location
-            lng (float): Longitude of the location
-
-        Returns:
-            str: Name of the location or "Unknown Location" if geocoding fails
-        """
-        try:
-            location = rg.search((lat, lng))
-            return location[0]['name']
-        except Exception as e:
-            logger.error(f"Error retrieving location: {e}")
-            return "Unknown Location"
-
     def screenshot(self, lat: float, lng: float, zm: int, w: int, h: int,
-                   max_retries=3) -> tuple:
+                   max_retries=3) -> Image:
         """
         Capture a screenshot of a map location in a new browser tab.
 
@@ -181,7 +162,7 @@ class GetMapHook:
             self.driver.switch_to.window(tabs[0])
 
             logger.info(f"Screenshot captured for coordinates {lat}, {lng}")
-            return image, self.get_location_name(lat, lng)
+            return image
 
         except Exception as e:
             if max_retries > 0:

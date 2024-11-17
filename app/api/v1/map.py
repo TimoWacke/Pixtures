@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Query
-from pydantic import BaseModel, Field, field_validator
 from fastapi.responses import StreamingResponse
 from fastapi.exceptions import HTTPException
 from http import HTTPStatus
@@ -7,6 +6,11 @@ from io import BytesIO
 import logging
 
 from app.hooks.get_map_hook import GetMapHook
+from app.services.region_service import (
+    RegionService,
+    Coordinates, MapCoordinates, LocationAddress,
+    Favorite
+)
 
 
 """
@@ -30,23 +34,6 @@ logger = logging.getLogger(__name__)
 get_map_hook = GetMapHook()
 
 
-class Coordinates(BaseModel):
-    lat: float = Field(..., ge=-90, le=90, description="Latitude (-90 to 90)")
-    lng: float = Field(..., ge=-180, le=180, description="Longitude (-180 to 180)")
-
-    @field_validator("lat", "lng", mode="before")
-    def validate_required(cls, value, field):
-        if value is None:
-            raise ValueError(f"{field.name} is required.")
-        return value
-
-
-class MapCoordinates(Coordinates):
-    zoom: int = Field(12, ge=0, le=20, description="Zoom level (0-20)")
-    width: int = Field(800, ge=0, description="Image width in pixels")
-    height: int = Field(600, ge=0, description="Image height in pixels")
-
-
 @router.get('/screenshot')
 def get_map_screenshot(
     coords: MapCoordinates = Query(...)
@@ -66,13 +53,16 @@ def get_map_screenshot(
     """
     try:
         # Get the screenshot using GetMapHook
-        image, location_name = get_map_hook.screenshot(
+        image = get_map_hook.screenshot(
             lat=coords.lat,
             lng=coords.lng,
             zm=coords.zoom,
             w=coords.width,
             h=coords.height
         )
+
+        location_name = RegionService().get_location_name(
+            Coordinates(lat=coords.lat, lng=coords.lng))
 
         # Convert PIL Image to bytes
         img_byte_array = BytesIO()
@@ -102,15 +92,10 @@ def get_map_screenshot(
         )
 
 
-class LocationResponse(BaseModel):
-    location: str
-    coordinates: Coordinates
-
-
 @router.get('/location')
 def get_location_info(
     coords: Coordinates = Query(...)
-) -> LocationResponse:
+) -> LocationAddress:
     """
     Endpoint to get location information without screenshot.
 
@@ -122,11 +107,7 @@ def get_location_info(
         JSON response with location information
     """
     try:
-        location_name = get_map_hook.get_location_name(coords.lat, coords.lng)
-        return LocationResponse(
-            location=location_name,
-            coordinates=coords
-        )
+        return RegionService().get_location(coords)
 
     except Exception as e:
         logger.error(f"Error retrieving location: {str(e)}")
@@ -137,3 +118,12 @@ def get_location_info(
                 "details": str(e),
             },
         )
+
+
+@router.get('/suggested')
+def get_suggested_location() -> list[Favorite]:
+    """
+    Endpoint to get a all suggested locations.
+    """
+    service = RegionService()
+    return service.get_suggested()

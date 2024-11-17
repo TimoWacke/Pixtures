@@ -4,7 +4,7 @@ from io import BytesIO
 from bson import ObjectId
 import base64
 
-from pydantic import BaseModel, Field
+from pydantic import Field
 from functools import lru_cache
 
 from app.db.models.user_image_model import UserImageModel, collection_name as user_collection
@@ -12,16 +12,13 @@ from app.db.models.art_pieces_model import ArtPiecesModel
 from app.db.base_collection import BaseCollection
 from app.algorithms.map_face import MapFace
 from app.hooks.get_map_hook import GetMapHook
+from app.api.v1.map import Coordinates, MapCoordinates
+from app.services.region_service import RegionService
 
 
-class GenerateRequest(BaseModel):
+class GenerateRequest(MapCoordinates):
     image_id: str = Field(alias='imageId')
     user_id: str = Field(alias='userId')
-    latitude: float = Field(alias='lat')
-    longitude: float = Field(alias='lng')
-    zoom: float = Field(alias='zm')
-    map_with: float = Field(alias='width')
-    map_height: float = Field(alias='height')
 
 
 class GenerateService:
@@ -66,12 +63,15 @@ class GenerateService:
 
     def make_map_art(self, request: GenerateRequest) -> ArtPiecesModel:
 
-        map_image, region_name = GetMapHook().screenshot(
-            lat=request.latitude,
-            lng=request.longitude,
+        region_name = RegionService().get_location_name(
+            Coordinates(lat=request.lat, lng=request.lng))
+
+        map_image = GetMapHook().screenshot(
+            lat=request.lat,
+            lng=request.lng,
             zm=request.zoom,
-            w=request.map_with,
-            h=request.map_height
+            w=request.width,
+            h=request.height
         )
 
         image_id = ObjectId(request.image_id)
@@ -103,8 +103,8 @@ class GenerateService:
         art_piece = ArtPiecesModel(
             user_id=self.user_id,
             image_id=ObjectId(request.image_id),
-            latitude=request.latitude,
-            longitude=request.longitude,
+            latitude=request.lat,
+            longitude=request.lng,
             zoom=request.zoom,
             width=result_width,
             height=result_height,

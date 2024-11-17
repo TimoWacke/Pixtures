@@ -45,13 +45,13 @@
     <div id="cnWrapper" class="hori">
       <span class="cityname special" id="cnbefore">{{
         this.previewLocation
-        }}</span>
+      }}</span>
       <span class="cityname">
         {{ this.previewLocation }}
       </span>
       <span class="cityname special" id="cnafter">{{
         this.previewLocation
-        }}</span>
+      }}</span>
     </div>
     <div id="mockupContainer">
       <img v-for="mockup in mockupUrls" :key="mockup" :src="mockup" />
@@ -114,22 +114,7 @@ export default {
       errormsg: "",
       previewLocation: "",
       previewUrl: "",
-      suggestedCities: [
-        { name: "Amsterdam", lat: 52.365, lng: 4.88, zm: 14.9 },
-        { name: "London", lat: 51.5, lng: -0.09, zm: 13.8 },
-        { name: "Paris", lat: 48.8566, lng: 2.33, zm: 14.8 },
-        { name: "Stockholm", lat: 59.335, lng: 18.0686, zm: 14.3 },
-        { name: "Cape Town", lat: -34, lng: 18.48, zm: 14 },
-        { name: "Rio d Janeiro", lat: -22.93, lng: -43.2, zm: 14.4 },
-        { name: "Tokyo", lat: 35.7, lng: 139.8, zm: 12 },
-        { name: "Bejing", lat: 39.9, lng: 116.4, zm: 13 },
-        { name: "Shanghai", lat: 31.1, lng: 121.55, zm: 11.75 },
-        { name: "Guangzhou", lat: 22.8, lng: 113.3, zm: 11.4 },
-        { name: "Hong Kong", lat: 22.31, lng: 114.17, zm: 14.9 },
-        { name: "New York", lat: 40.733, lng: -73.99, zm: 14.6 },
-        { name: "Los Angeles", lat: 33.93, lng: -118.2, zm: 12.3 },
-        { name: "Chicago", lat: 41.8781, lng: -87.67, zm: 14.6 },
-      ],
+      suggestedCities: [],
       userId: null
     };
   },
@@ -149,22 +134,11 @@ export default {
         VueCookie.set("userId", objectId);
       }
       var me = this;
-      
-      this.identifier = window.location["href"].match(/\?(\S+)/)[1];
-      console.log(window.location);
+
       axios
-        .get(vars.pixtures + "/printful/identifier/" + this.identifier)
+        .get(vars.pixtures + "/api/v1/map/suggested")
         .then((response) => {
-          me.previewUrl = response.data.previewUrl;
-          me.previewLocation = response.data.region;
-          me.coordinates.lat = response.data.lat;
-          me.coordinates.lng = response.data.lng;
-          me.coordinates.zm = response.data.zm;
-          me.scale =
-            response.data.width /
-            document.getElementById("background").offsetWidth;
-          me.status = "Loading Mockups";
-          me.getMockUps();
+          me.suggestedCities = response.data;
         });
     } catch {
       this.coordinates = this.suggestedCities[0];
