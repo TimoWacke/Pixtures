@@ -31,12 +31,12 @@ export default {
       var w;
       (w = window.SnipcartSettings).protocol != null || (w.protocol = "https");
       var f =
-          window.SnipcartSettings.version.includes("v3.0.0-ci") ||
-          (window.SnipcartSettings.version != "3.0" &&
-            window.SnipcartSettings.version.localeCompare("3.4.0", void 0, {
-              numeric: !0,
-              sensitivity: "base",
-            }) === -1),
+        window.SnipcartSettings.version.includes("v3.0.0-ci") ||
+        (window.SnipcartSettings.version != "3.0" &&
+          window.SnipcartSettings.version.localeCompare("3.4.0", void 0, {
+            numeric: !0,
+            sensitivity: "base",
+          }) === -1),
         m = ["focus", "mouseover", "touchmove", "scroll", "keydown"];
       window.LoadSnipcart = o;
       document.readyState === "loading"
@@ -45,7 +45,7 @@ export default {
       function r() {
         window.SnipcartSettings.loadStrategy
           ? window.SnipcartSettings.loadStrategy === "on-user-interaction" &&
-            (m.forEach((t) => document.addEventListener(t, o)),
+          (m.forEach((t) => document.addEventListener(t, o)),
             setTimeout(o, window.SnipcartSettings.timeoutDuration))
           : o();
       }
@@ -63,17 +63,17 @@ export default {
           );
         e ||
           ((e = document.createElement("div")),
-          (e.id = "snipcart"),
-          e.setAttribute("hidden", "true"),
-          document.body.appendChild(e)),
+            (e.id = "snipcart"),
+            e.setAttribute("hidden", "true"),
+            document.body.appendChild(e)),
           v(e),
           i ||
-            ((i = document.createElement("script")),
+          ((i = document.createElement("script")),
             (i.src = `${window.SnipcartSettings.protocol}://${window.SnipcartSettings.domain}/themes/v${window.SnipcartSettings.version}/default/snipcart.js`),
             (i.async = !0),
             t.appendChild(i)),
           n ||
-            ((n = document.createElement("link")),
+          ((n = document.createElement("link")),
             (n.rel = "stylesheet"),
             (n.type = "text/css"),
             (n.href = `${window.SnipcartSettings.protocol}://${window.SnipcartSettings.domain}/themes/v${window.SnipcartSettings.version}/default/snipcart.css`),
@@ -83,14 +83,14 @@ export default {
       function v(t) {
         !f ||
           ((t.dataset.apiKey = window.SnipcartSettings.publicApiKey),
-          window.SnipcartSettings.addProductBehavior &&
+            window.SnipcartSettings.addProductBehavior &&
             (t.dataset.configAddProductBehavior =
               window.SnipcartSettings.addProductBehavior),
-          window.SnipcartSettings.modalStyle &&
+            window.SnipcartSettings.modalStyle &&
             (t.dataset.configModalStyle = window.SnipcartSettings.modalStyle),
-          window.SnipcartSettings.currency &&
+            window.SnipcartSettings.currency &&
             (t.dataset.currency = window.SnipcartSettings.currency),
-          window.SnipcartSettings.templatesUrl &&
+            window.SnipcartSettings.templatesUrl &&
             (t.dataset.templatesUrl = window.SnipcartSettings.templatesUrl));
       }
 
@@ -153,16 +153,10 @@ export default {
 $primary: #0f476f;
 $secondary: #ff049b;
 
-.sign-page {
-  margin: 0;
-  height: 80vh;
-  display: flex;
-  align-items: center;
-}
-
 #app {
   font-family: "Nunito", "Roboto";
   color: $primary;
+  width: 100vw;
 }
 
 .none {
@@ -171,38 +165,6 @@ $secondary: #ff049b;
 
 .pointer {
   cursor: pointer;
-}
-
-#content.site {
-  max-width: calc(100% - 120px);
-  display: flex;
-  justify-content: center;
-  padding: 100px 60px 50px 60px;
-  margin: 0;
-  .wrap {
-    min-width: min-content;
-  }
-}
-
-#content {
-  margin: 120px 60px 120px 0;
-  @media only screen and (min-width: 1700px) {
-    padding-right: 50px;
-  }
-  padding-right: calc(5vw - 100px);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-
-  .wrap {
-    display: flex;
-    flex-wrap: wrap;
-    .project {
-      margin-right: 50px;
-      min-width: 25vw;
-      margin-bottom: auto;
-    }
-  }
 }
 
 h1,
@@ -215,6 +177,7 @@ h3 {
 }
 
 .headers {
+
   h1,
   h2,
   h3,
@@ -223,22 +186,26 @@ h3 {
     margin-bottom: 10px;
     border-radius: 5px;
   }
+
   h2 {
     padding: 5px 30px 5px 15px;
     color: #fff;
     font-size: 16px;
     background: $secondary;
+
     @media only screen and (min-width: 800px) {
       background: linear-gradient(120deg, #f0b0 15%, $secondary 20%);
       margin-left: calc(-3vw - 100px);
       padding-left: calc(3vw + 100px);
     }
   }
+
   h1 {
     @media only screen and (max-width: 800px) {
       font-size: 24px;
     }
   }
+
   margin-bottom: 50px;
 }
 
@@ -266,6 +233,7 @@ a {
 #error {
   color: $secondary;
 }
+
 .hidden {
   opacity: 0;
   height: 0;
@@ -293,18 +261,22 @@ hr.hidden {
   div {
     align-self: flex-start;
     text-align: left;
+
     p,
     a,
     button {
       margin: 5px 0;
       font-size: 16px;
     }
+
     &.small {
       margin: 5px 12px 10px;
+
       p,
       a {
         font-size: 12px;
       }
+
       #error {
         margin-bottom: 5px;
       }
@@ -327,13 +299,9 @@ hr.hidden {
     color: #fff;
     width: 36%;
 
-    @media only screen and (max-width: 900px) {
-      width: 50%;
-    }
-    @media only screen and (max-width: 600px) {
-      width: 100%;
-    }
+
     min-width: 100px;
+
     &.right {
       margin-top: calc(10px - 1.5vw);
     }
@@ -354,13 +322,16 @@ form {
   display: flex;
   flex-direction: row;
   padding: 0;
+
   &.zontal {
     align-items: center;
+
     input,
     select {
       width: 100%;
     }
   }
+
   &.spce {
     width: 100%;
     justify-content: space-between;
@@ -381,6 +352,7 @@ form {
       }
     }
   }
+
   &.d {
     @media only screen and (max-width: 900px) {
       flex-direction: column;
@@ -399,7 +371,10 @@ form {
   flex-direction: column;
   align-items: flex-start;
   padding: 30px 0;
-  max-width: 1000px;
+
+  &:not(.wide) {
+    max-width: 1000px;
+  }
   width: 90%;
 
   margin: auto;
@@ -414,17 +389,21 @@ label {
   margin-top: 10px;
   font-weight: 600;
 }
+
 input,
 button,
 select {
   margin: 5px 0px;
   border: none;
   outline: none;
+
   &:not([type="color"]) {
     padding: 5px 10px;
   }
+
   border-radius: 3px;
   white-space: nowrap;
+
   &:disabled {
     opacity: 0.69;
     cursor: default;
@@ -437,6 +416,7 @@ button {
   font-weight: bold;
   padding: 5px 10px;
   background-color: $primary;
+
   &.invert {
     border: 2px solid;
     background-color: #fff;
@@ -445,11 +425,10 @@ button {
 }
 
 .gradient {
-  background: linear-gradient(
-    20deg,
-    rgba(8, 36, 56, 1) 0%,
-    rgba(15, 71, 111, 1) 100%
-  );
+  background: linear-gradient(20deg,
+      rgba(8, 36, 56, 1) 0%,
+      rgba(15, 71, 111, 1) 100%);
+
   a,
   * {
     color: #fff;
@@ -505,6 +484,7 @@ select:not([type="color"]) {
     width: calc(150px + 10vw);
     margin: auto calc(-75px - 5vw) calc(5vw - 75px) auto;
   }
+
   @media only screen and (max-width: 900px) {
     margin: 0 0 0 auto;
   }
@@ -519,9 +499,11 @@ select:not([type="color"]) {
   label {
     display: none;
   }
+
   .content-icon {
     margin: auto 0 auto 0;
   }
+
   margin: 10px auto;
 }
 
@@ -529,6 +511,7 @@ select:not([type="color"]) {
   height: 100%;
   display: flex;
   align-items: flex-end;
+
   button {
     min-width: 100px;
   }
@@ -537,6 +520,7 @@ select:not([type="color"]) {
 .public-layout {
   margin-top: 20px;
   width: 250px;
+
   p {
     margin-top: 10px;
   }
@@ -545,182 +529,6 @@ select:not([type="color"]) {
 .node {
   display: flex;
   flex-direction: row;
-}
-
-#content #details {
-  display: flex;
-  flex-direction: row !important;
-  justify-content: space-between;
-  #details {
-    margin: 10px;
-    label {
-      margin-bottom: 10px;
-    }
-  }
-
-  .field {
-    margin: 0px 10px;
-    .text-right {
-      text-align: right;
-    }
-  }
-}
-
-#content .home #details {
-  display: flex;
-  flex-direction: column !important;
-  #details {
-    margin: 0 !important;
-  }
-  .box {
-    .box {
-      flex-direction: row !important;
-    }
-  }
-}
-
-.project {
-  width: min-content;
-}
-
-#content #details #details {
-  display: flex;
-  flex-wrap: wrap;
-  width: auto;
-  .field {
-    min-width: max-content;
-    p {
-      max-width: 200px;
-      white-space: wrap;
-    }
-  }
-}
-
-#details .box {
-  display: flex;
-
-  margin-left: 10px;
-
-  input {
-    border: 1px solid #000;
-    border-radius: 2px;
-    background: transparent;
-  }
-  .box {
-    justify-content: space-between;
-    flex-direction: row;
-    .field {
-      padding-left: 10px;
-      p {
-        min-width: 100px;
-        max-width: 150px;
-      }
-    }
-  }
-  .field {
-    display: flex;
-    flex-direction: column;
-  }
-
-  textarea {
-    min-height: 50px;
-    max-height: calc(15vh + 50px);
-    min-width: calc(25vw - 10px);
-    max-width: calc(25vw - 10px);
-    padding: 5px;
-  }
-
-  .draft button {
-    margin-bottom: 30px;
-    display: flex;
-  }
-}
-
-@media only screen and (max-width: 800px) {
-  .hori.highlvl {
-    flex-direction: column;
-  }
-  #menubtn {
-    right: 10px !important;
-    position: absolute !important;
-    margin: 0;
-    padding: 0;
-  }
-
-  #content.site {
-    max-width: calc(100vw - 30px);
-    padding: 100px 15px 50px 15px;
-    .wrap {
-      flex-direction: column;
-      width: 100%;
-    }
-    .project {
-      width: calc(100vw - 30px - 30px);
-      overflow: hidden;
-      padding: 5px 15px 10px;
-      margin: 20px 0;
-
-      h2,
-      h3,
-      h4 {
-        font-size: 14px;
-        a {
-          font-size: 14px;
-        }
-        margin: 10px 0 5px;
-      }
-      font-size: 8px;
-      p,
-      a,
-      label,
-      input,
-      button,
-      select,
-      textarea {
-        font-size: 10px;
-      }
-      hr {
-        height: 16px;
-      }
-      .mobile-compr {
-        flex-wrap: wrap;
-      }
-      margin-bottom: 0;
-      .dragdrop,
-      textarea {
-        max-width: calc(100% - 22px) !important;
-        min-width: calc(100% - 22px) !important;
-
-        padding: 5px 10px;
-      }
-      .node:not(.file) {
-        margin-left: 0;
-        margin-right: 0;
-
-        #details {
-          flex-direction: column !important;
-          margin-left: 0 !important;
-          margin-right: 0 !important;
-          div {
-            margin-left: 0;
-            margin-right: 0;
-            div {
-              margin-left: 0;
-              margin-right: 0;
-            }
-          }
-        }
-      }
-      .content-icon img {
-        width: 20px !important;
-        height: 20px !important;
-        margin: 5px 10px 0 0;
-      }
-      button {
-        min-width: 66px;
-      }
-    }
-  }
 }
 
 #snipcart {
