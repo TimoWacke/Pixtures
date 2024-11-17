@@ -35,7 +35,12 @@ class Settings(BaseSettings):
 
     SELENIUM_URL: str = "http://selenium-hub:4444/wd/hub"
 
-    MAP_URL: str = "http://pixtures:6969/static/map.html"
+    @property
+    def MAP_URL(self) -> str:
+        if self.ENVIRONMENT == EnvironmentType.LOCAL:
+            return "https://pixtures.sea.hamburg/static/map.html"
+        if self.ENVIRONMENT == EnvironmentType.PROD:
+            return "http://pixtures:6969/static/map.html"
 
     @property
     def MONGO_URI(self) -> str:

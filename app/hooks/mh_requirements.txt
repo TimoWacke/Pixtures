@@ -1,0 +1,10 @@
+fastapi==0.115
+Flask==3.1.0
+pillow==11.0.0
+pillow_heif==0.20.0
+pydantic==2.9.2
+pydantic-settings==2.6.1
+pydantic_core==2.23.4
+requests==2.32.3
+reverse_geocoder==1.5.1
+selenium==4.26.1
