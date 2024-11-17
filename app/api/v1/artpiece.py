@@ -43,5 +43,23 @@ async def list_art_pieces():
     )
 
     art_pieces = collection.list()
+    # reverse
+    art_pieces.reverse()
     # return all preview urls
     return [f"{settings.SELF_DOMAIN}/api/v1/artpiece/{str(art_piece.id)}" for art_piece in art_pieces]
+
+
+@router.delete("/{pieceId}")
+async def delete_art_piece(
+    pieceId: str = Path(...),
+):
+    piece_id = ObjectId(pieceId)
+
+    collection = BaseCollection(
+        collection_name=art_pieces_collection,
+        model_class=ArtPiecesModel
+    )
+
+    collection.delete(piece_id)
+
+    return {"message": "Art piece deleted."}
