@@ -154,7 +154,7 @@ export default {
     reloadScale(updatecords = true) {
       if (updatecords) {
         var loc = document.querySelector(
-          "#gmap > div > div.vue-map > div > div > div:nth-child(15) > div > a"
+          "#gmap > div > div.vue-map > div > div.gm-style > div:nth-child(14) > div > a"
         ).href;
         var match = loc.match(/\?ll=(-?[.\d]+),(-?[.\d]+)&z=([\d.]+)&/);
         this.coordinates = {
