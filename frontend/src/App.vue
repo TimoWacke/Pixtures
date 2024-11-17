@@ -372,6 +372,8 @@ form {
   align-items: flex-start;
   padding: 30px 0;
 
+  max-width: 1800px;
+
   &:not(.wide) {
     max-width: 1000px;
   }
