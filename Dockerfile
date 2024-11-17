@@ -6,7 +6,7 @@ WORKDIR /
 # Copy the application code into the container
 COPY ./app /app
 COPY ./requirements.txt /requirements.txt
-COPY ./patterns /
+COPY ./patterns /patterns
 
 # Install system dependencies and Chrome
 RUN apt-get update && apt-get install -y --no-install-recommends \
