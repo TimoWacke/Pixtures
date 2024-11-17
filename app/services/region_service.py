@@ -21,7 +21,7 @@ class Coordinates(BaseModel):
 
 
 class MapCoordinates(Coordinates):
-    zoom: int = Field(12, ge=0, le=20, description="Zoom level (0-20)")
+    zm: int = Field(12, ge=0, le=20, description="Zoom level (0-20)")
     width: int = Field(800, ge=0, description="Image width in pixels")
     height: int = Field(600, ge=0, description="Image height in pixels")
 

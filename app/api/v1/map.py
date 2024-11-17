@@ -56,7 +56,7 @@ def get_map_screenshot(
         image = get_map_hook.screenshot(
             lat=coords.lat,
             lng=coords.lng,
-            zm=coords.zoom,
+            zm=coords.zm,
             w=coords.width,
             h=coords.height
         )

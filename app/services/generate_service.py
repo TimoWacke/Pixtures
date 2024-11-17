@@ -71,7 +71,7 @@ class GenerateService:
         map_image = GetMapHook().screenshot(
             lat=request.lat,
             lng=request.lng,
-            zm=request.zoom,
+            zm=request.zm,
             w=request.width,
             h=request.height
         )
@@ -107,7 +107,7 @@ class GenerateService:
             image_id=ObjectId(request.image_id),
             latitude=request.lat,
             longitude=request.lng,
-            zoom=request.zoom,
+            zoom=request.zm,
             width=result_width,
             height=result_height,
             region=region_name,
