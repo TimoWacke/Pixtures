@@ -398,31 +398,12 @@ form {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  width: 61%;
-
-  &.wide {
-    width: 90%;
-    max-width: 1760px;
-  }
+  padding: 30px 0;
+  max-width: 1000px;
+  width: 90%;
 
   margin: auto;
 
-  @media only screen and (max-width: 800px) {
-    width: calc(80% + 30px);
-  }
-
-  h1 {
-    color: $primary;
-  }
-  &.tight {
-    @media only screen and (min-width: 1200px) {
-      width: 50%;
-    }
-
-    @media only screen and (min-width: 1650px) {
-      width: 40%;
-    }
-  }
 }
 
 div:empty {

@@ -24,11 +24,5 @@ const router = createRouter({
   routes: baseRoutes
 })
 
-router.beforeEach(async (to, from, next) => {
-  to
-  from
-  return next()
-}
-)
 
 export default router
