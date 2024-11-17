@@ -9,8 +9,8 @@
     </div>
     <div class="gallery">
       <div class="image-container" v-for="url in imageUrls" :key="url">
-        <img :src="url" />
-        <button class="delete-btn" @click="deleteImage(url)">
+        <img :src="url" @click="goToArtPiece(url)" />
+        <button class="delete-btn" @click="deleteImage(url)" v-if="this.$route.href.includes('delete')">
           Delete
         </button>
       </div>
@@ -35,34 +35,32 @@ export default {
   name: "Landing-Site",
   data() {
     return {
-      imageUrls: []
-    }
+      imageUrls: [],
+    };
   },
   mounted() {
-    try {
-      let me = this;
-      axios
-        .get(vars.pixtures + "/api/v1/artpiece/")
-        .then((response) => {
-          me.imageUrls = response.data;
-        });
-    } catch {
-      this.coordinates = this.suggestedCities[0];
-    }
-    setTimeout(() => this.reloadScale(), 2500);
+    axios
+      .get(vars.pixtures + "/api/v1/artpiece/")
+      .then((response) => {
+        this.imageUrls = response.data;
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   },
   methods: {
     deleteImage(url) {
       if (confirm("Are you sure you want to delete this image?")) {
-        axios
-          .delete(url)
-          .then(() => {
-            this.imageUrls = this.imageUrls.filter((item) => item !== url);
-          });
+        axios.delete(url).then(() => {
+          this.imageUrls = this.imageUrls.filter((item) => item !== url);
+        });
       }
     },
+    goToArtPiece(url) {
+      const imageId = url.split("/").pop(); // Extract image ID from URL
+      this.$router.push({ name: "ArtPiece", params: { id: imageId } });
+    },
   },
-  components: {},
 };
 </script>
 

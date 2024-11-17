@@ -3,7 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import Map from '@/views/Map'
 import Landing from '@/views/Landing'
-
+import ArtPiece from '@/views/ArtPiece.vue'
 
 let baseRoutes = [
   {
@@ -15,6 +15,11 @@ let baseRoutes = [
     path: '/create',
     name: 'Map-Site',
     component: Map
+  },
+  {
+    path: "/art-piece/:id",
+    name: "ArtPiece",
+    component: ArtPiece,
   }
 ]
 
