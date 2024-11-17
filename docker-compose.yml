@@ -6,6 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
+      ENVIRONMENT: ${ENVIRONMENT}  # Use variables from .env
       PRINTFUL_BEARER: ${PRINTFUL_BEARER}  # Use variables from .env
       MONGO_USERNAME: ${MONGO_USERNAME}  # Use variables from .env
       MONGO_PASSWORD: ${MONGO_PASSWORD}  # Use variables from .env

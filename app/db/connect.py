@@ -11,17 +11,16 @@ class MongoDBConnection:
     _instance = None
     _client = None
 
-    # Singleton pattern
-    @classmethod
-    def get_instance(cls):
+    # Singleton pattern using __new__
+    def __new__(cls, *args, **kwargs):
         if cls._instance is None:
-            cls._instance = cls()
+            cls._instance = super(MongoDBConnection, cls).__new__(cls, *args, **kwargs)
+            cls._instance.connect()  # Initialize only once
         return cls._instance
 
-    def __init__(self):
-        self.connect()
-
     def connect(self):
+        if self._client is not None:  # Avoid reconnecting if already connected
+            return
         try:
             connection_string = settings.MONGO_URI
 
@@ -59,12 +58,23 @@ class MongoDBConnection:
             raise e
 
     def get_client(self):
+        if self._client is None:
+            logger.error('MongoDB client is not initialized. Please check the connection.')
+            raise ValueError("MongoDB client is not initialized.")
         return self._client
 
     def get_database(self, db_name):
-        return self._client[db_name]
+        if self._client is None:
+            logger.error('MongoDB client is not initialized. Cannot access database.')
+            raise ValueError("MongoDB client is not initialized.")
+        try:
+            return self._client[db_name]
+        except Exception as e:
+            logger.error(f'Error accessing database {db_name}: {e}')
+            raise
 
     def close(self):
-        self._client.close()
-        logger.info('Connection to MongoDB closed')
-        self._client = None
+        if self._client:
+            self._client.close()
+            logger.info('Connection to MongoDB closed')
+            self._client = None
