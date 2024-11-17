@@ -40,6 +40,8 @@ class GenerateService:
 
         image = Image.open(BytesIO(image_file.file.read()))
         file_extension = image_file.filename.split(".")[-1]
+        if file_extension.lower() == 'jpg':
+            file_extension = 'jpeg'
 
         buffered = BytesIO()
         image.save(buffered, format=file_extension)
