@@ -17,7 +17,7 @@ mockup_cache = TTLCache(maxsize=128, ttl=600)  # TTL is in seconds
 @router.get("/{art_piece_id}")
 async def get_mockup_url(
     art_piece_id: str = Path(...)
-) -> dict:
+) -> list[str]:
     """
     Fetch mockup URLs for the given art_piece_id, using a cached result if available.
     """
