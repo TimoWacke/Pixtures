@@ -12,24 +12,20 @@ router = APIRouter()
 logger = logging.getLogger(__name__)
 
 
-async def sleep(ms: int):
-    """Helper function for delaying (using asyncio.sleep to avoid blocking the event loop)."""
-    await asyncio.sleep(ms / 1000)  # Convert milliseconds to seconds
-
-
 @router.get("/{art_piece_id}")
 async def get_mockup_url(
     art_piece_id: str = Path(...),
 ) -> list[str]:
     try:
-        return (await request_mockup_url(art_piece_id))
+        task = asyncio.create_task(request_mockup_url(art_piece_id))
+        return await task
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @lru_cache(maxsize=128)
-async def request_mockup_url(art_piece_id: str) -> list[str]:
+def request_mockup_url(art_piece_id: str) -> list[str]:
     collection = BaseCollection(
         collection_name=art_pieces_collection,
         model_class=ArtPiecesModel
@@ -88,7 +84,6 @@ async def request_mockup_url(art_piece_id: str) -> list[str]:
 
     # Poll for the mockup result
     while len(mockup_url) < len(mockreqs):
-        await sleep(1000)  # Wait 1 second before polling again
 
         # Get the status of the task
         status_response = requests.get(
