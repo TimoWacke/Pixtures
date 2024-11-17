@@ -1,4 +1,5 @@
 import asyncio
+from functools import lru_cache
 from fastapi import APIRouter, HTTPException, Path
 from typing import List
 import requests
@@ -18,6 +19,7 @@ async def sleep(ms: int):
 
 
 @router.get("/{art_piece_id}")
+@lru_cache(maxsize=128)
 async def get_mockup_url(
     art_piece_id: str = Path(...),
 ) -> List[str]:
