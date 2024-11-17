@@ -21,12 +21,12 @@ async def get_mockup_url(
     """
     Fetch mockup URLs for the given art_piece_id, using a cached result if available.
     """
-    if art_piece_id in mockup_cache:
-        # Return cached result
-        return mockup_cache[art_piece_id]
-
-    # If not cached, start the task
     try:
+        # Return cached result
+        if art_piece_id in mockup_cache:
+            return mockup_cache[art_piece_id]
+
+        # If not cached, start the task
         task = asyncio.create_task(generate_mockup_task(art_piece_id))
         result = await task
         mockup_cache[art_piece_id] = result  # Cache the result
