@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException, Path
 import asyncio
 from cachetools import TTLCache
 import requests
+import logging
 
 from app.db.models.art_pieces_model import ArtPiecesModel, collection_name as art_pieces_collection
 from app.db.base_collection import BaseCollection
@@ -24,11 +25,13 @@ async def get_mockup_url(
     try:
         # Return cached result
         if art_piece_id in mockup_cache:
+            logging.info(f"Returning cached mockup for {art_piece_id}")
             return mockup_cache[art_piece_id]
 
         # If not cached, start the task
         task = asyncio.create_task(generate_mockup_task(art_piece_id))
         result = await task
+        logging.info(f"Generated mockup for {art_piece_id}")
         mockup_cache[art_piece_id] = result  # Cache the result
         return result
     except Exception as e:
