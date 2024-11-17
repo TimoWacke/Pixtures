@@ -22,7 +22,7 @@ async def get_mockup_url(
     art_piece_id: str = Path(...),
 ) -> list[str]:
     try:
-        return request_mockup_url(art_piece_id)
+        return (await request_mockup_url(art_piece_id))
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
