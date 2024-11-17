@@ -33,7 +33,10 @@ class Settings(BaseSettings):
     MONGO_PORT: str = "27017"
     MONGO_DATABASE: str = "pixtures"
 
-    SELENIUM_URL: str = "http://selenium-hub:4444/wd/hub"
+    # Selenium WebDriver settings
+    CHROME_BIN: str = "/usr/bin/chromium"
+    CHROMEDRIVER_PATH: str = "/usr/bin/chromedriver"
+    CHROME_FLAGS: str = "--headless --disable-gpu --no-sandbox --disable-dev-shm-usage"
 
     @property
     def MAP_URL(self) -> str:

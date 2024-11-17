@@ -40,6 +40,13 @@ def create_startup_message() -> None:
 
     add_separator()
 
+    table.add_row("Chrome Binary", settings.CHROME_BIN)
+    table.add_row("Chrome Driver", settings.CHROMEDRIVER_PATH)
+    table.add_row("Chrome Flags", settings.CHROME_FLAGS)
+    table.add_row("Map URL", settings.MAP_URL)
+
+    add_separator()
+
     table.add_row("Platform", platform.platform())
     table.add_row("Python Version", platform.python_version())
     table.add_row("Listening on", settings.HOST + ":" + settings.APP_PORT)
