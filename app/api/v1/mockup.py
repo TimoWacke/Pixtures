@@ -7,6 +7,7 @@ import logging
 from app.db.models.art_pieces_model import ArtPiecesModel, collection_name as art_pieces_collection
 from app.db.base_collection import BaseCollection
 from app.core.settings import settings
+from app.api.v1.artpiece import get_preview_url_for_artpiece
 
 
 router = APIRouter()
@@ -62,8 +63,6 @@ def request_mockup_url(art_piece_id: str) -> list[str]:
     xwidth = piece.width
     yheight = piece.height
 
-    url_to_file = settings.SELF_DOMAIN + settings.API_V1_STR + "/artpiece/id/" + str(piece.id)
-
     mockreqs = ["Lifestyle 11", "Lifestyle 4", "Lifestyle 2"]
     mockup_url = []
     horizontal = xwidth > yheight
@@ -79,7 +78,7 @@ def request_mockup_url(art_piece_id: str) -> list[str]:
         "files": [
             {
                 "placement": "default",
-                "image_url": url_to_file,
+                "image_url": get_preview_url_for_artpiece(art_piece_id),
                 "position": {
                     "area_width": awidth,
                     "area_height": aheight,

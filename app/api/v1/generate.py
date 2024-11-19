@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
 from app.services.generate_service import get_generate_service, GenerateRequest
-from app.core.settings import settings
+from app.api.v1.artpiece import get_preview_url_for_artpiece
 
 import logging
 
@@ -23,7 +23,7 @@ async def generate_map(
         art_piece = generator.make_map_art(request)
 
         return {
-            "preview": f"{settings.SELF_DOMAIN}{settings.API_V1_STR}/artpiece/{str(art_piece.id)}",
+            "preview": get_preview_url_for_artpiece(art_piece.id),
             "id": str(art_piece.id),
             "location": art_piece.region
         }

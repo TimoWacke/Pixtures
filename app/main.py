@@ -7,7 +7,7 @@ from typing import AsyncGenerator
 from app.core.startup_message import create_startup_message
 from app.core.settings import settings
 from app.core.router_register import RouterRegistry
-
+import os
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator:
@@ -65,7 +65,10 @@ def create_app() -> FastAPI:
         raise e
 
     # Serve static files
-    app.mount("/static", StaticFiles(directory="/app/static"), name="static")
+    if os.path.exists("/app/static"):
+        app.mount("/static", StaticFiles(directory="/app/static"), name="static")
+    else:
+        app.mount("/static", StaticFiles(directory="./app/static"), name="static")
 
     return app
 

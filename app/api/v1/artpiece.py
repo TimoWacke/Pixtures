@@ -24,6 +24,10 @@ router = APIRouter()
 logger = logging.getLogger(__name__)
 
 
+def get_preview_url_for_artpiece(art_piece_id: ObjectId) -> str:
+    return f"{settings.SELF_DOMAIN}{settings.API_V1_STR}/artpiece/id/{art_piece_id}"
+
+
 @router.get("/id/{pieceId}")
 async def generate_map(
     pieceId: str = Path(...),
@@ -80,7 +84,7 @@ def list_liked_pieces():
     art_pieces = shuffle_controlled(art_pieces)
 
     # return all preview urls
-    return [f"{settings.SELF_DOMAIN}/api/v1/artpiece/id/{str(art_piece.id)}" for art_piece in art_pieces]
+    return [get_preview_url_for_artpiece(ap.id) for ap in art_pieces]
 
 
 @router.delete("/{pieceId}")
