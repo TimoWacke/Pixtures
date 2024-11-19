@@ -42,7 +42,7 @@ export default {
     const endpoint = `${process.env.VUE_APP_BACKEND_URL}/api/v1/mockup/${imageId}`;
 
     // Initially show the normal image while mockups load
-    this.mainImageUrl = `${process.env.VUE_APP_BACKEND_URL}/api/v1/artpiece/${imageId}`;
+    this.mainImageUrl = `${process.env.VUE_APP_BACKEND_URL}/api/v1/artpiece/id/${imageId}`;
     this.currentImageUrl = this.mainImageUrl;
 
     // Fetch the mockup images

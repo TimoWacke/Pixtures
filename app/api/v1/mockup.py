@@ -62,7 +62,7 @@ def request_mockup_url(art_piece_id: str) -> list[str]:
     xwidth = piece.width
     yheight = piece.height
 
-    url_to_file = settings.SELF_DOMAIN + settings.API_V1_STR + "/artpiece/" + str(piece.id)
+    url_to_file = settings.SELF_DOMAIN + settings.API_V1_STR + "/artpiece/id/" + str(piece.id)
 
     mockreqs = ["Lifestyle 11", "Lifestyle 4", "Lifestyle 2"]
     mockup_url = []

@@ -60,7 +60,7 @@ export default {
     deleteImage(url) {
       const imageId = url.split("/").pop(); // Extract image ID from URL
       if (confirm("Are you sure you want to delete this image?")) {
-        axios.delete(`${process.env.VUE_APP_BACKEND_URL}/api/v1/artpiece/delete/${imageId}`).then(() => {
+        axios.delete(`${process.env.VUE_APP_BACKEND_URL}/api/v1/artpiece/${imageId}`).then(() => {
           this.imageUrls = this.imageUrls.filter((item) => item !== url);
         });
       }
