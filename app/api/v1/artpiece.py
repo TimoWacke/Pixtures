@@ -6,7 +6,7 @@ import pandas as pd
 from functools import lru_cache
 import base64
 from io import BytesIO
-
+import logging
 from PIL import Image
 
 from app.core.settings import settings
@@ -20,6 +20,8 @@ from app.db.models.art_pieces_model import (
 
 
 router = APIRouter()
+
+logger = logging.getLogger(__name__)
 
 
 @router.get("/id/{pieceId}")
@@ -52,11 +54,13 @@ def get_artpiece_by_id_cached(pieceId: str, x: int, y: int) -> tuple[bytes, str]
     if (x and x < art_piece.width) or (y and y < art_piece.height):
         if x:
             y = x * art_piece.height // art_piece.width
+        elif y:
+            x = y * art_piece.width // art_piece.height
+
+        logger.info(f"Resizing image to {x}x{y}")
 
         # open image in pillow and resize
-        pillow_img = Image.open(image_bytes,
-                                formats=[image_ext]
-                                ).resize((x, y))
+        pillow_img = Image.open(BytesIO(image_bytes)).resize((x, y))
         buffer = BytesIO()
         pillow_img.save(buffer, format=image_ext)
         image_bytes = buffer.getvalue()
@@ -95,7 +99,7 @@ async def delete_art_piece(
     return {"message": "Art piece deleted."}
 
 
-@router.get("/like/{pieceId}")
+@router.post("/like/{pieceId}")
 async def like_art_piece(
     pieceId: str = Path(...),
 ):
@@ -149,11 +153,13 @@ def shuffle_controlled(artpieces: list[ArtPiecesModel], row_break=3) -> list[Art
 
     # Define a helper function to shuffle with prioritization by likes
     def weighted_shuffle(df):
+        if df.empty:
+            return df
         # Normalize likes to probabilities
-        total_likes = df['likes'].sum()
+        total_likes = df['likes'].sum() + 1
         if total_likes == 0:
             return df.sample(frac=1, random_state=42)  # Equal weights if no likes
-        weights = df['likes'] / total_likes
+        weights = (df['likes'] + (1 / len(df))) / total_likes
         return df.sample(frac=1, weights=weights, random_state=None)
 
     # Separate horizontal and vertical items, applying weighted shuffling

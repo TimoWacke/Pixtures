@@ -25,15 +25,15 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        VUE_APP_BACKEND_URL: ${VUE_APP_BACKEND_URL}  # Use variables from .env
+        VUE_APP_GOOGLE_MAPS_API_KEY: ${VUE_APP_GOOGLE_MAPS_API_KEY}
+        VUE_APP_GOOGLE_MAP_ID: ${VUE_APP_GOOGLE_MAP_ID}
+        VUE_APP_SNIPCARD_API_KEY: ${VUE_APP_SNIPCARD_API_KEY}
     ports:
       - 7000:7000
     networks:
       - pixtures
-    environment:
-      VUE_APP_BACKEND_URL: ${VUE_APP_BACKEND_URL}  # Use variables from .env
-      VUE_APP_GOOGLE_MAPS_API_KEY: ${VUE_APP_GOOGLE_MAPS_API_KEY}
-      VUE_APP_GOOGLE_MAP_ID: ${VUE_APP_GOOGLE_MAP_ID}
-      VUE_APP_SNIPCARD_API_KEY: ${VUE_APP_SNIPCARD_API_KEY}
   mongodb:
     image: mongo:latest
     container_name: mongodb
