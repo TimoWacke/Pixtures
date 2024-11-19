@@ -1,10 +1,17 @@
-from fastapi import APIRouter, Path
+from fastapi import APIRouter, Path, Query
 from fastapi.responses import Response
 from bson import ObjectId
+from typing import Optional
 import pandas as pd
 from functools import lru_cache
-from app.core.settings import settings
 import base64
+from io import BytesIO
+
+from PIL import Image
+
+from app.core.settings import settings
+
+
 from app.db.base_collection import BaseCollection
 from app.db.models.art_pieces_model import (
     ArtPiecesModel,
@@ -18,21 +25,19 @@ router = APIRouter()
 @router.get("/id/{pieceId}")
 async def generate_map(
     pieceId: str = Path(...),
+    x: Optional[int] = Query(None),
+    y: Optional[int] = Query(None),
 ):
 
-    art_piece = get_artpiece_by_id_cached(pieceId)
-
-    # send file to user
-    image_base64_encoded = art_piece.art_image
-    image_extension = art_piece.file_extension
+    img_bytes, img_ext = get_artpiece_by_id_cached(pieceId, x, y)
 
     return Response(
-        content=base64.b64decode(image_base64_encoded),
-        media_type=f"image/{image_extension}")
+        content=img_bytes,
+        media_type=f"image/{img_ext}")
 
 
 @lru_cache(maxsize=128)
-def get_artpiece_by_id_cached(pieceId: str) -> ArtPiecesModel:
+def get_artpiece_by_id_cached(pieceId: str, x: int, y: int) -> tuple[bytes, str]:
     piece_id = ObjectId(pieceId)
 
     collection = BaseCollection(
@@ -40,7 +45,23 @@ def get_artpiece_by_id_cached(pieceId: str) -> ArtPiecesModel:
         model_class=ArtPiecesModel
     )
 
-    return collection.get_by_id(piece_id)
+    art_piece = collection.get_by_id(piece_id)
+    image_bytes = base64.b64decode(art_piece.art_image)
+    image_ext = art_piece.file_extension
+
+    if (x and x < art_piece.width) or (y and y < art_piece.height):
+        if x:
+            y = x * art_piece.height // art_piece.width
+
+        # open image in pillow and resize
+        pillow_img = Image.open(image_bytes,
+                                formats=[image_ext]
+                                ).resize((x, y))
+        buffer = BytesIO()
+        pillow_img.save(buffer, format=image_ext)
+        image_bytes = buffer.getvalue()
+
+    return image_bytes, image_ext
 
 
 @router.get("/highlights")

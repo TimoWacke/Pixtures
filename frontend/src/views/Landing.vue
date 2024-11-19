@@ -9,7 +9,7 @@
     </div>
     <div class="gallery">
       <div class="image-container" v-for="url in imageUrls" :key="url">
-        <img :src="url" @click="goToArtPiece(url)" />
+        <img :src="`${url}?y=240`" @click="goToArtPiece(url)" />
         <button class="delete-btn" @click="deleteImage(url)" v-if="this.$route.href.includes('delete')">
           Delete
         </button>
