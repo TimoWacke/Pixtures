@@ -19,7 +19,7 @@ export default {
         rotateControl: false,
         fullscreenControl: false,
         disableDefaultUi: false,
-        mapId: "6b1f31442f4ffc3b", //here comes your map id
+        mapId: process.env.VUE_APP_GOOGLE_MAP_ID, //here comes your map id
       },
     };
   },

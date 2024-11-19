@@ -29,7 +29,6 @@
 
 <script>
 import axios from "axios";
-import vars from "../assets/vars";
 
 export default {
   name: "Landing-Site",
@@ -40,7 +39,7 @@ export default {
   },
   mounted() {
     axios
-      .get(vars.pixtures + "/api/v1/artpiece/")
+      .get(process.env.VUE_APP_BACKEND_URL + "/api/v1/artpiece/highlights")
       .then((response) => {
         this.imageUrls = response.data;
       })

@@ -91,7 +91,6 @@
 <script>
 import axios from "axios";
 import VueCookie from "vue-cookies";
-import vars from "../assets/vars";
 import GMap from "../components/myMap.vue";
 
 export default {
@@ -136,7 +135,7 @@ export default {
       var me = this;
 
       axios
-        .get(vars.pixtures + "/api/v1/map/suggested")
+        .get(process.env.VUE_APP_BACKEND_URL + "/api/v1/map/suggested")
         .then((response) => {
           me.suggestedCities = response.data;
         });
@@ -221,7 +220,7 @@ export default {
       formData.append("userId", this.userId);
       var me = this;
       axios
-        .post(vars.pixtures + "/api/v1/portrait", formData, {
+        .post(process.env.VUE_APP_BACKEND_URL + "/api/v1/portrait", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -303,7 +302,7 @@ export default {
       console.log(body);
       this.mockUpDone = false;
       axios
-        .post(vars.pixtures + "/api/v1/generate", body,
+        .post(process.env.VUE_APP_BACKEND_URL + "/api/v1/generate", body,
           {
             headers: {
               "Content-Type": "application/json",
@@ -327,7 +326,7 @@ export default {
       this.status = "Generating Mockups";
       var me = this;
       axios
-        .get(vars.pixtures + "/api/v1/mockup/" + this.identifier)
+        .get(process.env.VUE_APP_BACKEND_URL + "/api/v1/mockup/" + this.identifier)
         .then((response) => {
           me.mockupUrls = response.data;
           me.mockUpDone = true;
@@ -341,7 +340,7 @@ export default {
     },
     checkOut() {
       axios
-        .post(vars.pixtures + "/printful/checkout", {
+        .post(process.env.VUE_APP_BACKEND_URL + "/printful/checkout", {
           token: VueCookie.get("session_token"),
           imageToken: this.imageId,
         })

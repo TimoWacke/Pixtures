@@ -15,7 +15,7 @@ export default {
     });
     window.SnipcartSettings = {
       publicApiKey:
-        "ODZiOGIwOTMtOTVkOS00OGJjLTliMDUtMjE2MzAwYTJiZDRjNjM4MDI4MzUzMjI4OTQyMjA0",
+        "",
       loadStrategy: "on-user-interaction",
     };
 

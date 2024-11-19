@@ -11,7 +11,7 @@ window.$ = window.jQuery = require('jquery')
 
 app.use(VueGoogleMaps, {
   load: {
-    key: "AIzaSyBWAWOLCKqRM9kuvOueScx8F0Uzw5tMjrM",
+    key: process.env.VUE_APP_GOOGLE_MAPS_API_KEY,
   }
 })
 app.use(router)

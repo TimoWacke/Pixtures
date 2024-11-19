@@ -15,7 +15,7 @@ from app.db.models.art_pieces_model import (
 router = APIRouter()
 
 
-@router.get("/{pieceId}")
+@router.get("/id/{pieceId}")
 async def generate_map(
     pieceId: str = Path(...),
 ):
@@ -55,7 +55,7 @@ def list_liked_pieces():
     art_pieces = shuffle_controlled(art_pieces)
 
     # return all preview urls
-    return [f"{settings.SELF_DOMAIN}/api/v1/artpiece/{str(art_piece.id)}" for art_piece in art_pieces]
+    return [f"{settings.SELF_DOMAIN}/api/v1/artpiece/id/{str(art_piece.id)}" for art_piece in art_pieces]
 
 
 @router.delete("/{pieceId}")

@@ -21,7 +21,6 @@
 
 <script>
 import axios from "axios";
-import vars from "../assets/vars";
 
 export default {
   name: "ArtPiece",
@@ -40,10 +39,10 @@ export default {
   },
   mounted() {
     const imageId = this.$route.params.id; // Get the image ID from route params
-    const endpoint = `${vars.pixtures}/api/v1/mockup/${imageId}`;
+    const endpoint = `${process.env.VUE_APP_BACKEND_URL}/api/v1/mockup/${imageId}`;
 
     // Initially show the normal image while mockups load
-    this.mainImageUrl = `${vars.pixtures}/api/v1/artpiece/${imageId}`;
+    this.mainImageUrl = `${process.env.VUE_APP_BACKEND_URL}/api/v1/artpiece/${imageId}`;
     this.currentImageUrl = this.mainImageUrl;
 
     // Fetch the mockup images
