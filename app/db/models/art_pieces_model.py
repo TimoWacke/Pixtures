@@ -15,6 +15,7 @@ class ArtPiecesModel(BaseMongoModel):
     art_image: bytes
     region: str
     file_extension: str = 'PNG'
+    likes: int = 0
 
 
 collection_name = 'art_pieces'
