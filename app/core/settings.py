@@ -50,9 +50,12 @@ class Settings(BaseSettings):
 
     @property
     def FRONTEND_DOMAINS(self) -> list[str]:
-        domains = ["https://loyalty.sea.hamburg"]
+        domains = [
+            "https://loyalty.sea.hamburg",
+            "https://sea.hamburg"
+        ]
         if self.FRONTEND_DOMAIN:
-            domains.append(self.FRONTEND_DOMAIN)
+            return [self.FRONTEND_DOMAIN] + domains
         return domains
 
     class Config:
