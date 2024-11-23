@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Path, Query
 from fastapi.responses import Response
+from fastapi import HTTPException
 from bson import ObjectId
 from typing import Optional
 import pandas as pd
@@ -44,87 +45,103 @@ async def generate_map(
 
 @lru_cache(maxsize=128)
 def get_artpiece_by_id_cached(pieceId: str, x: int, y: int) -> tuple[bytes, str]:
-    piece_id = ObjectId(pieceId)
+    try:
+        piece_id = ObjectId(pieceId)
 
-    collection = BaseCollection(
-        collection_name=art_pieces_collection,
-        model_class=ArtPiecesModel
-    )
+        collection = BaseCollection(
+            collection_name=art_pieces_collection,
+            model_class=ArtPiecesModel
+        )
 
-    art_piece = collection.get_by_id(piece_id)
-    image_bytes = base64.b64decode(art_piece.art_image)
-    image_ext = art_piece.file_extension
+        art_piece = collection.get_by_id(piece_id)
+        image_bytes = base64.b64decode(art_piece.art_image)
+        image_ext = art_piece.file_extension
 
-    if (x and x < art_piece.width) or (y and y < art_piece.height):
-        if x:
-            y = x * art_piece.height // art_piece.width
-        elif y:
-            x = y * art_piece.width // art_piece.height
+        if (x and x < art_piece.width) or (y and y < art_piece.height):
+            if x:
+                y = x * art_piece.height // art_piece.width
+            elif y:
+                x = y * art_piece.width // art_piece.height
 
-        logger.info(f"Resizing image to {x}x{y}")
+            logger.info(f"Resizing image to {x}x{y}")
 
-        # open image in pillow and resize
-        pillow_img = Image.open(BytesIO(image_bytes)).resize((x, y))
-        buffer = BytesIO()
-        pillow_img.save(buffer, format=image_ext)
-        image_bytes = buffer.getvalue()
+            # open image in pillow and resize
+            pillow_img = Image.open(BytesIO(image_bytes)).resize((x, y))
+            buffer = BytesIO()
+            pillow_img.save(buffer, format=image_ext)
+            image_bytes = buffer.getvalue()
 
-    return image_bytes, image_ext
+        return image_bytes, image_ext
+    except Exception as e:
+        logger.error(f"Error generating image: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/highlights")
 def list_liked_pieces():
-    collection = BaseCollection(
-        collection_name=art_pieces_collection,
-        model_class=ArtPiecesModel
-    )
+    try:
+        collection = BaseCollection(
+            collection_name=art_pieces_collection,
+            model_class=ArtPiecesModel
+        )
 
-    art_pieces = collection.list()
+        art_pieces = collection.list()
 
-    art_pieces = shuffle_controlled(art_pieces)
+        art_pieces = shuffle_controlled(art_pieces)
 
-    # return all preview urls
-    return [get_preview_url_for_artpiece(ap.id) for ap in art_pieces]
+        # return all preview urls
+        return [get_preview_url_for_artpiece(ap.id) for ap in art_pieces]
+    except Exception as e:
+        logger.error(f"Error listing liked pieces: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.delete("/{pieceId}")
 async def delete_art_piece(
     pieceId: str = Path(...),
 ):
-    piece_id = ObjectId(pieceId)
+    try:
+        piece_id = ObjectId(pieceId)
 
-    collection = BaseCollection(
-        collection_name=art_pieces_collection,
-        model_class=ArtPiecesModel
-    )
+        collection = BaseCollection(
+            collection_name=art_pieces_collection,
+            model_class=ArtPiecesModel
+        )
 
-    collection.delete(piece_id)
+        collection.delete(piece_id)
 
-    return {"message": "Art piece deleted."}
+        return {"message": "Art piece deleted."}
+    except Exception as e:
+        logger.error(f"Error deleting art piece: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.post("/like/{pieceId}")
 async def like_art_piece(
     pieceId: str = Path(...),
 ):
-    piece_id = ObjectId(pieceId)
+    try:
+        piece_id = ObjectId(pieceId)
 
-    collection = BaseCollection(
-        collection_name=art_pieces_collection,
-        model_class=ArtPiecesModel
-    )
+        collection = BaseCollection(
+            collection_name=art_pieces_collection,
+            model_class=ArtPiecesModel
+        )
 
-    art_piece = collection.get_by_id(piece_id)
+        art_piece = collection.get_by_id(piece_id)
 
-    art_piece.likes += 1
+        art_piece.likes += 1
 
-    update_dict = {
-        "likes": art_piece.likes
-    }
+        update_dict = {
+            "likes": art_piece.likes
+        }
 
-    collection.update(art_piece.id, update_dict)
+        collection.update(art_piece.id, update_dict)
 
-    return {"message": "Art piece liked."}
+        return {"message": "Art piece liked."}
+    except Exception as e:
+        logger.error(f"Error liking art piece: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 def shuffle_controlled(artpieces: list[ArtPiecesModel], row_break=3) -> list[ArtPiecesModel]:

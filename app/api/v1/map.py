@@ -125,5 +125,15 @@ def get_suggested_location() -> list[Favorite]:
     """
     Endpoint to get a all suggested locations.
     """
-    service = RegionService()
-    return service.get_suggested()
+    try:
+        service = RegionService()
+        return service.get_suggested()
+    except Exception as e:
+        logger.error(f"Error retrieving suggested locations: {str(e)}")
+        raise HTTPException(
+            status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
+            detail={
+                "error": "Failed to retrieve suggested locations",
+                "details": str(e),
+            },
+        )
