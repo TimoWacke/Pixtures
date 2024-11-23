@@ -1,7 +1,7 @@
 services:
   pixtures:
     image: pixtures:latest
-    container_name: pixtures
+    container_name: ${ENVIRONMENT}-pixtures
     build:
       context: .
       dockerfile: Dockerfile
@@ -19,9 +19,9 @@ services:
       - mongodb
     networks:
       - pixtures
-  frontend:
+  pixtures-frontend:
     image: frontend:latest
-    container_name: frontend
+    container_name: ${ENVIRONMENT}-pixtures-frontend
     build:
       context: ./frontend
       dockerfile: Dockerfile
@@ -36,7 +36,7 @@ services:
       - pixtures
   mongodb:
     image: mongo:latest
-    container_name: mongodb
+    container_name: ${ENVIRONMENT}-mongodb
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}  # Use variables from .env
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}  # Use variables from .env
