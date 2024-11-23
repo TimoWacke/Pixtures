@@ -6,12 +6,14 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      ENVIRONMENT: ${ENVIRONMENT}  # Use variables from .env
-      PRINTFUL_BEARER: ${PRINTFUL_BEARER}  # Use variables from .env
-      MONGO_USERNAME: ${MONGO_USERNAME}  # Use variables from .env
-      MONGO_PASSWORD: ${MONGO_PASSWORD}  # Use variables from .env
-      MONGO_HOST: ${MONGO_HOST}  # Use variables from .env
-      APP_PORT: ${APP_PORT}  # Use variables from .env
+      ENVIRONMENT: ${ENVIRONMENT}
+      SELF_DOMAIN: ${SELF_DOMAIN}
+      FRONTEND_DOMAIN: ${FRONTEND_DOMAIN}
+      PRINTFUL_BEARER: ${PRINTFUL_BEARER}
+      MONGO_USERNAME: ${MONGO_USERNAME}
+      MONGO_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_HOST: ${MONGO_HOST} 
+      APP_PORT: ${APP_PORT}
       HOST: ${HOST}  # Use variables from .env
     ports:
       - "${APP_PORT}:${APP_PORT}"
