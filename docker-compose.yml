@@ -20,7 +20,7 @@ services:
     networks:
       - pixtures
   pixtures-frontend:
-    image: frontend:latest
+    image: pixtures-frontend:latest
     container_name: ${ENVIRONMENT}-pixtures-frontend
     build:
       context: ./frontend
@@ -30,8 +30,9 @@ services:
         VUE_APP_GOOGLE_MAPS_API_KEY: ${VUE_APP_GOOGLE_MAPS_API_KEY}
         VUE_APP_GOOGLE_MAP_ID: ${VUE_APP_GOOGLE_MAP_ID}
         VUE_APP_SNIPCARD_API_KEY: ${VUE_APP_SNIPCARD_API_KEY}
+        VUE_APP_PORT: ${VUE_APP_PORT}
     ports:
-      - 7000:7000
+      - "${VUE_APP_PORT}:${VUE_APP_PORT}"
     networks:
       - pixtures
   mongodb:
