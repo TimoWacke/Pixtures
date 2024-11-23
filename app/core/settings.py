@@ -18,11 +18,7 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
     ENVIRONMENT: EnvironmentType = EnvironmentType.PROD
 
-    FRONTEND_DOMAINS: Optional[list[str]] = [
-        "https://loyalty.sea.hamburg",
-        "https://sea.hamburg",
-        "http://localhost:8080"
-    ]
+    FRONTEND_DOMAIN: Optional[str] = None
     SELF_DOMAIN: str = "https://pixtures.sea.hamburg"
 
     PRINTFUL_BEARER: str
@@ -39,7 +35,7 @@ class Settings(BaseSettings):
     CHROME_FLAGS: str = "--headless --disable-gpu --no-sandbox --disable-dev-shm-usage"
 
     @property
-    def MAP_URL(self) -> str:
+    def MAP_URL(self) -> Optional[list[str]]:
         if self.ENVIRONMENT == EnvironmentType.LOCAL:
             return "https://pixtures.sea.hamburg/static/map.html"
         if self.ENVIRONMENT == EnvironmentType.PROD:
@@ -51,6 +47,16 @@ class Settings(BaseSettings):
             f"mongodb://{self.MONGO_USERNAME}:{self.MONGO_PASSWORD}@"
             f"{self.MONGO_HOST}:{self.MONGO_PORT}/{self.MONGO_DATABASE}?authSource=admin"
         )
+
+    @property
+    def FRONTEND_DOMAINS(self) -> list[str]:
+        domains = [
+            "https://loyalty.sea.hamburg",
+            "https://sea.hamburg"
+        ]
+        if self.FRONTEND_DOMAIN:
+            return [self.FRONTEND_DOMAIN] + domains
+        return domains
 
     class Config:
         env_file = '.env'

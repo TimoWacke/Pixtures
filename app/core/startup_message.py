@@ -30,7 +30,7 @@ def create_startup_message() -> None:
     # Add environment information
     table.add_row("Environment", settings.ENVIRONMENT)
     table.add_row("API Version", settings.API_V1_STR)
-    table.add_row("Frontend URL", ", ".join(settings.FRONTEND_DOMAINS))
+    table.add_row("Frontend Domains", ", ".join(settings.FRONTEND_DOMAINS))
     table.add_row("Service Runs on"), settings.SELF_DOMAIN
 
     add_separator()
